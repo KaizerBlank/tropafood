@@ -3,10 +3,7 @@ class Restaurante:
         self.id = id
         self.cnae = cnae
         self.desc_cnae = desc_cnae
-        self.desc_logradouro = desc_logradouro
-        self.nome_logradouro = nome_logradouro
-        self.numero = numero
+        self.endereco = desc_logradouro + ' ' + nome_logradouro + ',' + numero + '-' + nome_bairro
         self.complemento = complemento
-        self.nome_bairro = nome_bairro
         self.nome = nome
-        self.nome_fantasia = nome_fantasia        
+        self.nome_fantasia = nome_fantasia
