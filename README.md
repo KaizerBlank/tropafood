@@ -12,3 +12,5 @@
 - Na pasta raíz do projeto, no terminal rode: 
     - Construa a imagem no Docker: `docker build -t tropafood .` Isso pode levar vários minutos, minha primeira vez levou cerca de 600 segundos...
     - Execute o container: `docker run -p 8050:8050 tropafood`
+
+- Caso seja feita alguma mudança e queira atualizar a execução: `docker run -p 8050:8050 -v ${PWD}:/app tropafood-app`

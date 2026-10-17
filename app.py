@@ -6,6 +6,7 @@ app = Dash()
 
 app.layout = [
     html.H1(children='TP1 - ALG2', style={'textAlign':'center'}),
+    html.P("Teste")
 ]
 
 if __name__ == '__main__':
