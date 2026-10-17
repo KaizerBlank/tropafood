@@ -1,10 +1,10 @@
-input_csv = "data\bares.csv"
-output_csv = "data\bares_com_coordenadas.csv"
+input_csv = "data/bares.csv"
+output_csv = "data/bares_com_coordenadas.csv"
 import time
 import pandas as pd
 import osmnx as ox
 
-def geocodificar_bares(input_csv="data\bares.csv", output_csv="data\bares_com_coordenadas.csv"):
+def geocodificar_bares(input_csv="data/bares.csv", output_csv="data/bares_com_coordenadas.csv"):
     print("Carregando csv...")
     df = pd.read_csv(input_csv)
 
