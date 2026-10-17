@@ -26,6 +26,8 @@ tropafood/
 ┃ ┗ style.css                 - Para interface
 ┣ data/
 ┃ ┗ bares.csv                - Base de dados dos estabelecimentos de BH
+┣ docs/
+┃ ┗ tp1.pdfs
 ┣ entities/
 ┃ ┣ entregador.py             - Classe dos entregadores
 ┃ ┗ restaurante.py            - Classe dos restaurantes
