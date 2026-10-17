@@ -14,3 +14,35 @@
     - Execute o container: `docker run -p 8050:8050 tropafood`
 
 - Caso seja feita alguma mudança e queira atualizar a execução: `docker run -p 8050:8050 -v ${PWD}:/app tropafood-app`
+
+
+# Estrutura do projeto
+
+```bash
+tropafood/
+┣ .github/
+┃ ┗ pull_request_template.md
+┣ assets/
+┃ ┗ style.css                 - Para interface
+┣ data/
+┃ ┗ bares.csv                - Base de dados dos estabelecimentos de BH
+┣ entities/
+┃ ┣ entregador.py             - Classe dos entregadores
+┃ ┗ restaurante.py            - Classe dos restaurantes
+┣ scripts/
+┃ ┗ geocodicador.py                 - Script de geocodificação
+┣ src/
+┃ ┣ geohash.py                - Conversão de coordenadas para Geohash
+┃ ┣ grafo.py                  - Construção da malha viária de BH
+┃ ┣ simulador.py              - Motor de simulação da frota
+┃ ┗ trie.py                   - Implementação da árvore Trie
+┣ utilities/
+┃ ┗ files.py                  
+┣ .gitignore              
+┣ app.py                      - Interface web em Dash
+┣ dockerfile                  - Configuração do conteiner Docker
+┣ main.py                     - Script de execução e testes
+┣ README.md                   - Documentação do projeto
+┣ requirements.txt            - Dependências Python
+┗ tp1.pdf                     - Enunciado do tp
+```
