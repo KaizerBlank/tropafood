@@ -1,0 +1,1 @@
+#implementar aqui a conversão das coordenadas para Geohash32
