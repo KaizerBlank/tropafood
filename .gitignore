@@ -4,4 +4,5 @@ __pycache__/
 */*/__pycache__/
 *.pyc
 cache/*
+data/malha_bh_drive_31983.graphml
 .venv/

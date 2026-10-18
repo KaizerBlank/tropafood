@@ -4,7 +4,7 @@ import osmnx as ox
 ox.settings.log_console = True
 
 def obter_malha():
-    pasta = Path(__file__).resolve().parent.parent / "dados"
+    pasta = Path(__file__).resolve().parent.parent / "data"
     pasta.mkdir(parents=True, exist_ok=True)
 
     arquivo = pasta / "malha_bh_drive_31983.graphml"

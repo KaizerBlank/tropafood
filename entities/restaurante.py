@@ -1,9 +1,9 @@
 class Restaurante:
-    def __init__(self, id, cnae, desc_cnae, desc_logradouro, nome_logradouro, numero, complemento, nome_bairro, nome, nome_fantasia):
-        self.id = id
-        self.cnae = cnae
-        self.desc_cnae = desc_cnae
-        self.endereco = desc_logradouro + ' ' + nome_logradouro + ', ' + numero + ' - ' + nome_bairro
-        self.complemento = complemento
+    def __init__(self, id_restaurante, nome, latitude, longitude, desc_logradouro, 
+                 nome_logradouro, numero, complemento, nome_bairro, geohash=""):
+        self.id_restaurante = id_restaurante
         self.nome = nome
-        self.nome_fantasia = nome_fantasia
+        self.latitude = latitude
+        self.longitude = longitude
+        self.endereco = f"{desc_logradouro} {nome_logradouro}, {numero} - {nome_bairro}, Belo Horizonte - MG, Brasil".strip()
+        self.geohash = geohash
