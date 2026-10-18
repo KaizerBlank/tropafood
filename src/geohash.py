@@ -47,5 +47,3 @@ def encoding_geohash(lat, long):
         geohash += base32[index_base32]
 
     return geohash
-
-print(encoding_geohash(23.3, 42.3))
