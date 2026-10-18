@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import osmnx as ox
 
 ox.settings.log_console = True

@@ -1,15 +1,20 @@
-# implementar aqui a distribuição normal dos motoboys
 import numpy as np
 import pandas as pd
 import osmnx as ox
-from grafo import obter_malha
 import geopandas as gpd
 from shapely import wkt
+from shapely.geometry import LineString
+from utilities.constants import (
+    CRS_GRAUS,
+    CRS_METROS,
+    CSV_BARES,
+    CSV_ENTREGADORES_CORRIGIDOS,
+    CSV_ENTREGADORES_MATEMATICOS,
+    DESVIO_PADRAO_METROS,
+)
+from .grafo import obter_malha
 
-CRS_METROS = "EPSG:31983"
-CRS_GRAUS = "EPSG:4326"
-
-def gerar_entregadores_normais(df_bares, N_entregadores, desvio_padrao_metros=300.0):
+def gerar_entregadores_normais(df_bares, N_entregadores, desvio_padrao_metros=DESVIO_PADRAO_METROS):
     """
     Gera posições de entregadores baseadas numa distribuição normal 
     centrada nas coordenadas dos restaurantes, com um desviao padrao em metros
@@ -64,8 +69,7 @@ def gerar_entregadores_normais(df_bares, N_entregadores, desvio_padrao_metros=30
 
 def corrigir_para_ruas(df_entregadores, G):
     """
-    Aloca os entregadores para os nodes mais próximos do grafo
-    Gera coordenadas em metros e graus (lat long).
+    Aloca os entregadores para a aresta (rua) mais próxima do grafo.
     """
     gdf_entregadores_metros = gpd.GeoDataFrame(
         df_entregadores,
@@ -79,13 +83,27 @@ def corrigir_para_ruas(df_entregadores, G):
     xs_metros_rua = []
     ys_metros_rua = []
 
-    for geom in gdf_entregadores_metros.geometry:
-        x_metros, y_metros = geom.x, geom.y
-        no_mais_proximo = ox.distance.nearest_nodes(G, X=x_metros, Y=y_metros)
+    arestas = ox.distance.nearest_edges(
+        G, 
+        X=gdf_entregadores_metros.geometry.x.values, 
+        Y=gdf_entregadores_metros.geometry.y.values
+    )
 
-        xs_metros_rua.append(G.nodes[no_mais_proximo]["x"])
-        ys_metros_rua.append(G.nodes[no_mais_proximo]["y"])
+    for i, geom in enumerate(gdf_entregadores_metros.geometry):
+        u, v, key = arestas[i]
+        edge_data = G.edges[u, v, key]
+        
+        line = edge_data.get("geometry", LineString([
+            (G.nodes[u]["x"], G.nodes[u]["y"]), 
+            (G.nodes[v]["x"], G.nodes[v]["y"])
+        ]))
+        
+        ponto_projetado = line.interpolate(line.project(geom))
+        
+        xs_metros_rua.append(ponto_projetado.x)
+        ys_metros_rua.append(ponto_projetado.y)
 
+    df_entregadores = df_entregadores.copy()
     df_entregadores["x_rua_metros"] = xs_metros_rua
     df_entregadores["y_rua_metros"] = ys_metros_rua
 
@@ -102,29 +120,38 @@ def corrigir_para_ruas(df_entregadores, G):
     return df_entregadores
 
 if __name__ == "__main__":
-    print("1. Carregando bares...")
-    df_bares = pd.read_csv("data/30_bares.csv").dropna(subset=["GEOMETRIA"])
+    print("=== SIMULADOR DE ENTREGADORES ===")
+    
+    if not CSV_BARES.is_file():
+        raise FileNotFoundError(f"Arquivo de bares não encontrado: {CSV_BARES}")
 
-    print("2. Gerando entregadores baseados em metros (normal centrada na geometria do bar)...")
+    n_input = input("Número total de entregadores: ").strip()
+    N_entregadores = int(n_input) if n_input else 500
+
+    print("\nCarregando bares...")
+    df_bares = pd.read_csv(CSV_BARES).dropna(subset=["GEOMETRIA"])
+
+    print(f"Gerando {N_entregadores} entregadores (desvio: {DESVIO_PADRAO_METROS}m)...")
     df_entregadores_matematica = gerar_entregadores_normais(
-        df_bares, N_entregadores=100, desvio_padrao_metros=600.0
+        df_bares, N_entregadores=N_entregadores, desvio_padrao_metros=DESVIO_PADRAO_METROS
     )
-    df_entregadores_matematica.to_csv("data/entregadores_matematicos.csv", index=False)
-    print("   -> Guardado: data/entregadores_matematicos.csv")
+    df_entregadores_matematica.to_csv(CSV_ENTREGADORES_MATEMATICOS, index=False)
+    print(f"Salvo: {CSV_ENTREGADORES_MATEMATICOS}")
 
-    print("3. Carregando Malha Viária de BH - Grafo (SIRGAS 2000 - EPSG:31983)...")
+    print("Carregando Malha Viaria de BH - Grafo")
     G = obter_malha()
 
-    print("4. Corrigindo coordenadas dos entregadores para as ruas...")
+    print("Corrigindo coordenadas dos entregadores para as ruas...")
     df_entregadores_corrigido = corrigir_para_ruas(df_entregadores_matematica, G)
 
-    caminho_csv_rua = "data/entregadores_corrigidos.csv"
+    caminho_csv_rua = CSV_ENTREGADORES_CORRIGIDOS
     df_entregadores_corrigido.to_csv(caminho_csv_rua, index=False)
 
-    print(f"5. Deu bom! Arquivo final em: {caminho_csv_rua}\n")
+    print(f"Deu bom! Arquivo final em: {caminho_csv_rua}\n")
 
     cols_exibicao = [
         "id_entregador",
+        "restaurante_origem",
         "x_matematica_metros",
         "y_matematica_metros",
         "latitude_matematica",
