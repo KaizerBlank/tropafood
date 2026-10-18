@@ -118,7 +118,6 @@ if __name__ == "__main__":
         f"5.Deu bom! Arquivo final em: {caminho_csv_rua}\n"
     )
 
-    # Exibe as primeiras linhas para validação
     cols_exibicao = [
         "id_entregador",
         "latitude_matematica",
