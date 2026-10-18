@@ -1,74 +1,99 @@
-from dash import Dash, html, dcc
-import plotly.express as px
+from datetime import datetime
+from uuid import uuid4
+
 import pandas as pd
+from dash import Dash, Input, Output, State, html, dcc, no_update
+from utilities.constants import (
+    CSV_BARES,
+    CSV_ENTREGADORES_CORRIGIDOS,
+    CSV_ENTREGADORES_MATEMATICOS,
+    DATA_DIR,
+    DESVIO_PADRAO_METROS,
+)
+from src.grafo import obter_malha
+from src.simulador import corrigir_para_ruas, gerar_entregadores_normais
+from utilities.interface import plota_mapa_interface
 
-try:
-    df_entregadores = pd.read_csv("data/entregadores_corrigidos.csv")
-    df_bares = pd.read_csv("data/30_bares.csv").dropna(subset=["LATITUDE", "LONGITUDE"])
-except Exception as e:
-    print(f"Erro db!")
-    df_entregadores = pd.DataFrame()
-    df_bares = pd.DataFrame()
+df_bares = pd.read_csv(CSV_BARES).dropna(
+    subset=["GEOMETRIA", "LATITUDE", "LONGITUDE"]
+)
+df_entregadores = pd.DataFrame()
 
-if not df_entregadores.empty and not df_bares.empty:
-    df_bares["status"] = "Restaurante"
-    df_bares["nome_exibicao"] = df_bares.get("NOME", "Bar")
-    df_bares["lat"] = df_bares["LATITUDE"]
-    df_bares["lon"] = df_bares["LONGITUDE"]
-
-    df_entregadores["status"] = df_entregadores["filtrado"].map({
-        True: "Entregador Filtrato dentro do raio x",
-        False: "Entregador Fora do raio x"
-    })
-    df_entregadores["tipo"] = "Entregador"
-    df_entregadores["nome_exibicao"] = df_entregadores["id_entregador"]
-    df_entregadores["lat"] = df_entregadores["latitude_rua_graus"]
-    df_entregadores["lon"] = df_entregadores["longitude_rua_graus"]
-
-    df_mapa = pd.concat([
-        df_bares[["status", "nome_exibicao", "lat", "lon"]],
-        df_entregadores[["tipo", "nome_exibicao", "lat", "lon"]]
-    ], ignore_index=True)
-
-    lat_centro = df_bares["LATITUDE"].mean()
-    lon_centro = df_bares["LONGITUDE"].mean()
-
-    cores_status = {
-        "ntregador Filtrato dentro do raio x": "red",
-        "Entregador Fora do raio x": "gray",
-        "Restaurante": "blue"
-    }
-
-    fig = px.scatter_map(
-        df_mapa,
-        lat="lat",
-        lon="lon",
-        color="tipo",
-        hover_name="nome_exibicao",
-        zoom=12,
-        height=650,
-        title="Mapa",
-        map_style="basic"
-    )
-
-    fig.update_layout(
-        map={
-            "center": {"lat": lat_centro, "lon": lon_centro},
-        },
-        margin={"r":0, "t":40, "l":0, "b":0}
-    )
-
-else:
-    fig = px.scatter_map(title="No data")
+fig = plota_mapa_interface(df_entregadores, df_bares)
 
 app = Dash()
 
-app.layout = [
+app.layout = html.Div([
     html.H1(children='TP1 - ALG2', style={'textAlign':'center'}),
-    html.P("MAPA", style={'textAlign':'center'}),
-    
-    dcc.Graph(figure=fig)
-]
+    html.P("Quantidade de entregadores", style={'textAlign':'center'}),
+    html.Div([
+        dcc.Input(
+            id="quantidade-entregadores",
+            type="number",
+            min=1,
+            step=1,
+            value=100,
+        ),
+        html.Button("Gerar entregadores", id="gerar-entregadores", n_clicks=0),
+        dcc.Checklist(
+            id="salvar-csv",
+            options=[{"label": "Salvar CSVs desta geração", "value": "salvar"}],
+            value=[],
+        ),
+    ], style={"display": "flex", "justifyContent": "center", "gap": "8px"}),
+    html.P(id="mensagem-geracao", style={"textAlign": "center"}),
+    dcc.Graph(id="mapa-entregadores", figure=fig),
+])
+
+
+@app.callback(
+    Output("mapa-entregadores", "figure"),
+    Output("mensagem-geracao", "children"),
+    Input("gerar-entregadores", "n_clicks"),
+    State("quantidade-entregadores", "value"),
+    State("salvar-csv", "value"),
+    prevent_initial_call=True,
+)
+def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
+    if quantidade_entregadores is None or quantidade_entregadores < 1 or not float(quantidade_entregadores).is_integer():
+        return no_update, "Informe uma quantidade_entregadores inteira maior que zero."
+
+    try:
+        df_entregadores_matematicos = gerar_entregadores_normais(
+            df_bares,
+            N_entregadores=int(quantidade_entregadores),
+            desvio_padrao_metros=DESVIO_PADRAO_METROS,
+        )
+        grafo = obter_malha()
+        df_entregadores = corrigir_para_ruas(df_entregadores_matematicos, grafo)
+        figura = plota_mapa_interface(df_entregadores, df_bares)
+
+        mensagem = f"{len(df_entregadores)} entregadores gerados."
+        if "salvar" in (salvar_csv or []):
+            entregadores_matematico, entregadores_corrigido = salvar_csvs_entregadores(
+                df_entregadores_matematicos, df_entregadores
+            )
+            mensagem += f" CSVs salvos: {entregadores_matematico.name} e {entregadores_corrigido.name}."
+    except Exception as erro:
+        return no_update, f"Não foi possível gerar os entregadores: {erro}"
+
+    return figura, mensagem
+
+
+def salvar_csvs_entregadores(df_matematicos, df_corrigidos):
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    identificador = f"{datetime.now():%Y%m%d_%H%M%S_%f}_{uuid4().hex[:8]}"
+    entregadores_matematico = CSV_ENTREGADORES_MATEMATICOS.with_name(
+        f"{CSV_ENTREGADORES_MATEMATICOS.stem}_{identificador}.csv"
+    )
+    entregadores_corrigido = CSV_ENTREGADORES_CORRIGIDOS.with_name(
+        f"{CSV_ENTREGADORES_CORRIGIDOS.stem}_{identificador}.csv"
+    )
+
+    df_matematicos.to_csv(entregadores_matematico, index=False, mode="x")
+    df_corrigidos.to_csv(entregadores_corrigido, index=False, mode="x")
+    return entregadores_matematico, entregadores_corrigido
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8050, debug=False)
