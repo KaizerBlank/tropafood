@@ -20,14 +20,14 @@ if not df_entregadores.empty and not df_bares.empty:
         True: "Entregador Filtrato dentro do raio x",
         False: "Entregador Fora do raio x"
     })
-    df_entregadores["tipo"] = "Entregador"
+    df_entregadores["status"] = "Entregador"
     df_entregadores["nome_exibicao"] = df_entregadores["id_entregador"]
     df_entregadores["lat"] = df_entregadores["latitude_rua_graus"]
     df_entregadores["lon"] = df_entregadores["longitude_rua_graus"]
 
     df_mapa = pd.concat([
         df_bares[["status", "nome_exibicao", "lat", "lon"]],
-        df_entregadores[["tipo", "nome_exibicao", "lat", "lon"]]
+        df_entregadores[["status", "nome_exibicao", "lat", "lon"]]
     ], ignore_index=True)
 
     lat_centro = df_bares["LATITUDE"].mean()
@@ -43,7 +43,7 @@ if not df_entregadores.empty and not df_bares.empty:
         df_mapa,
         lat="lat",
         lon="lon",
-        color="tipo",
+        color="status",
         hover_name="nome_exibicao",
         zoom=12,
         height=650,
