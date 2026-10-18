@@ -48,3 +48,9 @@ tropafood/
 ┣ requirements.txt            - Dependências Python
 ┗ tp1.pdf                     - Enunciado do tp
 ```
+
+## Como executar o simulador
+
+Ainda nao tem iteratividade :(
+    
+docker run --rm -v ${PWD}:/app tropafood-app python -u src/simulador.py
