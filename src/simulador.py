@@ -49,7 +49,6 @@ def corrigir_para_ruas(df_entregadores, G):
     Aloca os entregadores para os nodes mais proximos do grafo (EPSG:31983 metros).
     Gera coordenadas em metros e graus (lat long)
     """
-    # cria uma coluna geometry nova com decimal lat e long
     gdf_entregadores = gpd.GeoDataFrame(
         df_entregadores,
         geometry=gpd.points_from_xy(
@@ -59,13 +58,11 @@ def corrigir_para_ruas(df_entregadores, G):
         crs="EPSG:4326",
     )
 
-    # Converte para metros igual o Grafo (EPSG:31983)
     gdf_entregadores_proj = gdf_entregadores.to_crs("EPSG:31983")
 
     xs_proj_rua = []
     ys_proj_rua = []
 
-    # Busca o node da rua mais proxima no grafo
     for geom in gdf_entregadores_proj.geometry:
         x_proj, y_proj = geom.x, geom.y
         no_mais_proximo = ox.distance.nearest_nodes(G, X=x_proj, Y=y_proj)
@@ -73,11 +70,9 @@ def corrigir_para_ruas(df_entregadores, G):
         xs_proj_rua.append(G.nodes[no_mais_proximo]["x"])
         ys_proj_rua.append(G.nodes[no_mais_proximo]["y"])
 
-    # salvaas coordenadas em metros
     df_entregadores["x_rua_metros"] = xs_proj_rua
     df_entregadores["y_rua_metros"] = ys_proj_rua
 
-    # Converte as posições das ruas em metros de volta para graus dec long lat
     gdf_rua_proj = gpd.GeoDataFrame(
         df_entregadores,
         geometry=gpd.points_from_xy(xs_proj_rua, ys_proj_rua),
@@ -85,7 +80,6 @@ def corrigir_para_ruas(df_entregadores, G):
     )
     gdf_rua_latlon = gdf_rua_proj.to_crs("EPSG:4326")
 
-    # Guarda as coordenadas geográficas em graus decimais
     df_entregadores["latitude_rua_graus"] = gdf_rua_latlon.geometry.y
     df_entregadores["longitude_rua_graus"] = gdf_rua_latlon.geometry.x
 
