@@ -106,7 +106,7 @@ class Trie_Compacta:
 
             #Se o rotulo do nó é menor que o geohash 
             elif index_maior_prefixo == len(rotulo_next_node):
-                temp_prefix = geohash[index_maior_prefixo:]
+                temp_geohash = temp_geohash[index_maior_prefixo:]
                 current_node = next_node
 
             #Geohash não bateu com rótulo
@@ -118,102 +118,12 @@ class Trie_Compacta:
         total_entregadores = []
 
         #Vemos se é nó folha vendo se existe entregador adicionado
-        if current_node.entregadores != []:
+        if current_node.entregadores:
             total_entregadores.extend(current_node.entregadores)
 
         for next_node in current_node.filhos.values():
             total_entregadores.extend(self.agregar_entregadores(next_node))
 
         return total_entregadores
-
-
-
-## TESTE
-
-DUMMY_DRIVERS = [
-    {"id": 1, "lat": -19.9327, "lon": -43.9362, "geohash": "7h6"},
-    {"id": 2, "lat": -19.9250, "lon": -43.9300, "geohash": "7h6"},
-    {"id": 3, "lat": -19.9400, "lon": -43.9400, "geohash": "7h6"},
-    {"id": 6, "lat": -19.8500, "lon": -43.9362, "geohash": "7h7"}, # Divisão em "7h" -> "6" e "7"
-    {"id": 10, "lat": -19.9327, "lon": -43.8000, "geohash": "7hk"}, # Divisão em "7h" -> "k"
-    {"id": 24, "lat": -22.9051, "lon": -43.1729, "geohash": "775"}, # Divisão na raiz em "7" -> "h" e "7"
-    {"id": 25, "lat": -23.5505, "lon": -46.6333, "geohash": "6gy"}, # Novo ramo na raiz ("6")
-]
-
-def imprimir_arvore(no, nivel=0):
-    """Função auxiliar para visualizar a estrutura de fragmentos da Trie."""
-    indent = "  " * nivel
-    info_entregadores = f" -> Entregadores IDs: {[d['id'] for d in no.entregadores]}" if no.entregadores != [] else ""
-    rotulo_display = f"'{no.rotulo}'" if no.rotulo else "RAIZ"
-    print(f"{indent}- Rótulo: {rotulo_display}{info_entregadores}")
     
-    for char_chave, filho in no.filhos.items():
-        imprimir_arvore(filho, nivel + 1)
-
-# Execução do teste
-trie = Trie_Compacta()
-
-print("=== Inserindo Entregadores na Trie ===")
-for driver in DUMMY_DRIVERS:
-    trie.insert(driver["geohash"], driver)
-    print(f"Inserido ID {driver['id']} com Geohash '{driver['geohash']}'")
-
-print("\n=== Estrutura Final da Trie Compacta ===")
-imprimir_arvore(trie.root)
-
-print(trie.search("7h"))
-
-
-## ================
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# dummy data para simular o hash
-DUMMY_DRIVERS = [
-    # Ponto Central (Restaurante em '7h6')
-    {"id": 1,  "lat": -19.9327, "long": -43.9362, "geohash": "7h6"},
-    {"id": 2,  "lat": -19.9250, "long": -43.9300, "geohash": "7h6"},
-    {"id": 3,  "lat": -19.9400, "long": -43.9400, "geohash": "7h6"},
-    {"id": 4,  "lat": -19.9300, "long": -43.9280, "geohash": "7h6"},
-    {"id": 5,  "lat": -19.9380, "long": -43.9320, "geohash": "7h6"},
-
-    # 8 Vizinhos Adjacentes (Bordas)
-    {"id": 6,  "lat": -19.8500, "long": -43.9362, "geohash": "7h7"},  # Norte
-    {"id": 7,  "lat": -19.8600, "long": -43.9300, "geohash": "7h7"},
-    {"id": 8,  "lat": -20.0200, "long": -43.9362, "geohash": "7h4"},  # Sul
-    {"id": 9,  "lat": -20.0100, "long": -43.9400, "geohash": "7h4"},
-    {"id": 10, "lat": -19.9327, "long": -43.8000, "geohash": "7hk"},  # Leste
-    {"id": 11, "lat": -19.9250, "long": -43.8100, "geohash": "7hk"},
-    {"id": 12, "lat": -19.9327, "long": -44.1000, "geohash": "7h3"},  # Oeste
-    {"id": 13, "lat": -19.9400, "long": -44.0800, "geohash": "7h3"},
-    {"id": 14, "lat": -19.8500, "long": -43.8000, "geohash": "7hm"},  # Nordeste
-    {"id": 15, "lat": -19.8500, "long": -44.1000, "geohash": "7h5"},  # Noroeste
-    {"id": 16, "lat": -20.0200, "long": -43.8000, "geohash": "7hj"},  # Sudeste
-    {"id": 17, "lat": -20.0200, "long": -44.1000, "geohash": "7h2"},  # Sudoeste
-
-    # Distantes (Não devem ser retornados na busca do restaurante '7h6')
-    {"id": 18, "lat": -19.7000, "long": -43.7000, "geohash": "7he"},
-    {"id": 19, "lat": -19.6500, "long": -43.6800, "geohash": "7he"},
-    {"id": 20, "lat": -20.3000, "long": -44.3000, "geohash": "7gk"},
-    {"id": 21, "lat": -20.3200, "long": -44.3100, "geohash": "7gk"},
-    {"id": 22, "lat": -18.5000, "long": -42.5000, "geohash": "7k1"},
-    {"id": 23, "lat": -18.5200, "long": -42.5100, "geohash": "7k1"},
-    {"id": 24, "lat": -22.9051, "long": -43.1729, "geohash": "775"},
-    {"id": 25, "lat": -23.5505, "long": -46.6333, "geohash": "6gy"}
-]
-
 
