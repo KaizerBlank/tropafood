@@ -1,5 +1,5 @@
 from utilities.files import *
-from entities.malha_viaria import obter_malha
+from src.grafo import obter_malha
 
 # Lemos os bares, lista de listas. Provavelmente não é a melhor maneira, mas é só para visualizarmos os dados
 print(ler_bares())
