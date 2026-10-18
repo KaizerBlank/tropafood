@@ -11,23 +11,33 @@ except Exception as e:
     df_bares = pd.DataFrame()
 
 if not df_entregadores.empty and not df_bares.empty:
-    df_bares["tipo"] = "Restaurante"
+    df_bares["status"] = "Restaurante"
     df_bares["nome_exibicao"] = df_bares.get("NOME", "Bar")
     df_bares["lat"] = df_bares["LATITUDE"]
     df_bares["lon"] = df_bares["LONGITUDE"]
 
+    df_entregadores["status"] = df_entregadores["filtrado"].map({
+        True: "Entregador Filtrato dentro do raio x",
+        False: "Entregador Fora do raio x"
+    })
     df_entregadores["tipo"] = "Entregador"
     df_entregadores["nome_exibicao"] = df_entregadores["id_entregador"]
     df_entregadores["lat"] = df_entregadores["latitude_rua_graus"]
     df_entregadores["lon"] = df_entregadores["longitude_rua_graus"]
 
     df_mapa = pd.concat([
-        df_bares[["tipo", "nome_exibicao", "lat", "lon"]],
+        df_bares[["status", "nome_exibicao", "lat", "lon"]],
         df_entregadores[["tipo", "nome_exibicao", "lat", "lon"]]
     ], ignore_index=True)
 
     lat_centro = df_bares["LATITUDE"].mean()
     lon_centro = df_bares["LONGITUDE"].mean()
+
+    cores_status = {
+        "ntregador Filtrato dentro do raio x": "red",
+        "Entregador Fora do raio x": "gray",
+        "Restaurante": "blue"
+    }
 
     fig = px.scatter_map(
         df_mapa,

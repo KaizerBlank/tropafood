@@ -39,6 +39,7 @@ def gerar_entregadores_normais(df_bares, N_entregadores, desvio_padrao=0.01): # 
                 "restaurante_origem": row.get("NOME", "Desconhecido"),
                 "latitude_matematica": lats_geradas[i],
                 "longitude_matematica": lons_geradas[i]
+                "filtrado": True
             })
             
     df_entregadores = pd.DataFrame(lista_entregadores)
