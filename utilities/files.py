@@ -3,7 +3,7 @@ from pathlib import Path
 from entities.entregador import Entregador
 from entities.restaurante import Restaurante
 
-def ler_entregadores():
+def ler_entregadores() -> list[Entregador]:
     arquivo = (
         Path(__file__).resolve().parent.parent
         / "data"

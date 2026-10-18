@@ -24,9 +24,9 @@ class Trie_Compacta:
         self.root = TrieNode("")
 
     #Eu provavelmente vou só passar o entregador como parâmetro e pegar dele o ID, geohash, etc..
-    def insert(self, geohash, entregador):
+    def insert(self, entregador):
         current_node = self.root
-        temp_geohash = geohash
+        temp_geohash = entregador.geohash
 
         while True:
             first_char = temp_geohash[0]
