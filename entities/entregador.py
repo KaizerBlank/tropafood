@@ -1,8 +1,10 @@
 class Entregador:
-    def __init__(self, id_Entregador, latitute, longitute, geohash=""):
-        self.id_Entregador = self.id_Entregador
-        self.latitute = latitute 
-        self.longitute = longitute  
+    def __init__(self, id_Entregador, latitude, longitude, x, y, geohash=""):
+        self.id_Entregador = id_Entregador
+        self.latitude = latitude 
+        self.longitude = longitude  
+        self.x = x
+        self.y = y
         self.geohash = geohash
         self.distancia_restaurante = 0.0
         self.tempo_estimado = 0.0
