@@ -53,7 +53,7 @@ def ler_entregadores() -> list[Entregador]:
 
     return entregadores
 
-def ler_bares():
+def ler_bares()->list[Restaurante]:
     arquivo = (
         Path(__file__).resolve().parent.parent
         / "data"
