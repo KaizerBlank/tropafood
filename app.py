@@ -16,7 +16,7 @@ from utilities.interface import plota_mapa_interface
 
 df_bares = pd.read_csv(CSV_BARES).dropna(
     subset=["GEOMETRIA", "LATITUDE", "LONGITUDE"]
-)
+).reset_index(drop=True)
 df_entregadores = pd.DataFrame()
 
 fig = plota_mapa_interface(df_entregadores, df_bares)
@@ -25,6 +25,17 @@ app = Dash()
 
 app.layout = html.Div([
     html.H1(children='TP1 - ALG2', style={'textAlign':'center'}),
+    dcc.Dropdown(
+        id="busca-restaurante",
+        options=[
+            {"label": str(bar.get("NOME", "Restaurante")), "value": indice}
+            for indice, bar in df_bares.iterrows()
+        ],
+        placeholder="Buscar restaurante pelo nome",
+        clearable=True,
+        searchable=True,
+        style={"maxWidth": "520px", "margin": "0 auto 12px"},
+    ),
     html.P("Quantidade de entregadores", style={'textAlign':'center'}),
     html.Div([
         dcc.Input(
@@ -52,11 +63,19 @@ app.layout = html.Div([
     Input("gerar-entregadores", "n_clicks"),
     State("quantidade-entregadores", "value"),
     State("salvar-csv", "value"),
+    State("busca-restaurante", "value"),
     prevent_initial_call=True,
 )
-def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
+def atualizar_mapa(
+    n_clicks,
+    quantidade_entregadores,
+    salvar_csv=None,
+    restaurante_indice=None,
+):
     if quantidade_entregadores is None or quantidade_entregadores < 1 or not float(quantidade_entregadores).is_integer():
         return no_update, "Informe uma quantidade_entregadores inteira maior que zero."
+    if restaurante_indice is not None and not 0 <= int(restaurante_indice) < len(df_bares):
+        return no_update, "Restaurante não encontrado."
 
     try:
         df_entregadores_matematicos = gerar_entregadores_normais(
@@ -66,7 +85,15 @@ def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
         )
         grafo = obter_malha()
         df_entregadores = corrigir_para_ruas(df_entregadores_matematicos, grafo)
-        figura = plota_mapa_interface(df_entregadores, df_bares)
+        figura = plota_mapa_interface(
+            df_entregadores,
+            df_bares,
+            indice_restaurante_selecionado=(
+                int(restaurante_indice)
+                if restaurante_indice is not None
+                else None
+            ),
+        )
 
         mensagem = f"{len(df_entregadores)} entregadores gerados."
         if "salvar" in (salvar_csv or []):
