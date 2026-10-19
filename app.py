@@ -1,5 +1,6 @@
 from datetime import datetime
 from uuid import uuid4
+from utilities.files import criar_entregadores
 
 import pandas as pd
 from dash import Dash, Input, Output, State, html, dcc, no_update
@@ -12,6 +13,7 @@ from utilities.constants import (
 )
 from src.grafo import obter_malha
 from src.simulador import corrigir_para_ruas, gerar_entregadores_normais
+from src.frota import Frota
 from utilities.interface import plota_mapa_interface
 
 df_bares = pd.read_csv(CSV_BARES).dropna(
@@ -85,6 +87,15 @@ def atualizar_mapa(
         )
         grafo = obter_malha()
         df_entregadores = corrigir_para_ruas(df_entregadores_matematicos, grafo)
+        registros = df_entregadores.to_dict(orient="records")
+        entregadores = criar_entregadores(registros)
+        frota = Frota(entregadores)
+
+        df_entregadores["geohash"] = [
+            entregador.geohash
+            for entregador in frota.entregadores
+        ]
+
         figura = plota_mapa_interface(
             df_entregadores,
             df_bares,
@@ -95,7 +106,7 @@ def atualizar_mapa(
             ),
         )
 
-        mensagem = f"{len(df_entregadores)} entregadores gerados."
+        mensagem = f"{len(frota.entregadores)} entregadores gerados e indexados na Trie."
         if "salvar" in (salvar_csv or []):
             entregadores_matematico, entregadores_corrigido = salvar_csvs_entregadores(
                 df_entregadores_matematicos, df_entregadores
