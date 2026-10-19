@@ -12,12 +12,14 @@ def carrega_entregadores_corrigidos():
 
     return df_entregadores, df_bares
 
-def plota_mapa_interface(df_entregadores, df_bares):
+def plota_mapa_interface(df_entregadores, df_bares, indice_restaurante_selecionado=None):
     partes_mapa = []
 
     if not df_bares.empty:
         df_bares = df_bares.copy()
         df_bares["status"] = "Restaurante"
+        if indice_restaurante_selecionado is not None:
+            df_bares.loc[indice_restaurante_selecionado, "status"] = "Restaurante selecionado"
         df_bares["nome_exibicao"] = df_bares.get("NOME", "Bar")
         df_bares["lat"] = df_bares["LATITUDE"]
         df_bares["lon"] = df_bares["LONGITUDE"]
@@ -38,7 +40,11 @@ def plota_mapa_interface(df_entregadores, df_bares):
     if partes_mapa:
         df_mapa = pd.concat(partes_mapa, ignore_index=True)
 
-        if not df_bares.empty:
+        if indice_restaurante_selecionado is not None and not df_bares.empty:
+            restaurante_selecionado = df_bares.iloc[indice_restaurante_selecionado]
+            lat_centro = restaurante_selecionado["LATITUDE"]
+            lon_centro = restaurante_selecionado["LONGITUDE"]
+        elif not df_bares.empty:
             lat_centro = df_bares["LATITUDE"].mean()
             lon_centro = df_bares["LONGITUDE"].mean()
         else:
@@ -48,7 +54,8 @@ def plota_mapa_interface(df_entregadores, df_bares):
         cores_status = {
             "Entregador Filtrado dentro do raio": "red",
             "Entregador Fora do raio": "gray",
-            "Restaurante": "blue"
+            "Restaurante": "blue",
+            "Restaurante selecionado": "green",
         }
 
         fig = px.scatter_map(
@@ -58,7 +65,7 @@ def plota_mapa_interface(df_entregadores, df_bares):
             color="status",
             color_discrete_map=cores_status,
             hover_name="nome_exibicao",
-            zoom=12,
+            zoom=15 if indice_restaurante_selecionado is not None else 12,
             height=650,
             title="Mapa de Bares e Entregadores",
             map_style="basic"
@@ -70,6 +77,11 @@ def plota_mapa_interface(df_entregadores, df_bares):
             },
             margin={"r":0, "t":40, "l":0, "b":0}
         )
+        if indice_restaurante_selecionado is not None:
+            fig.update_traces(
+                marker={"size": 24},
+                selector={"name": "Restaurante selecionado"},
+            )
 
     else:
         fig = px.scatter_map(title="Sem dados para exibir no mapa")
