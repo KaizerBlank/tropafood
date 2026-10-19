@@ -2,6 +2,7 @@ import csv
 from pathlib import Path
 from entities.entregador import Entregador
 from entities.restaurante import Restaurante
+from shapely import wkt
 
 def ler_entregadores() -> list[Entregador]:
     arquivo = (
@@ -26,7 +27,27 @@ def ler_entregadores() -> list[Entregador]:
                 longitude=float(linha["longitude_rua_graus"]),
                 x=float(linha["x_rua_metros"]),
                 y=float(linha["y_rua_metros"]),
-            )
+            aresta_u=(
+                int(linha["aresta_u"])
+                if linha.get("aresta_u") not in (None, "")
+                else None
+            ),
+            aresta_v=(
+                int(linha["aresta_v"])
+                if linha.get("aresta_v") not in (None, "")
+                else None
+            ),
+            aresta_key=(
+                int(linha["aresta_key"])
+                if linha.get("aresta_key") not in (None, "")
+                else None
+            ),
+            posicao_aresta_metros=(
+                float(linha["posicao_aresta_metros"])
+                if linha.get("posicao_aresta_metros") not in (None, "")
+                else None
+            ),
+        )
 
             entregadores.append(entregador)
 
@@ -48,11 +69,14 @@ def ler_bares()->list[Restaurante]:
         restaurantes_csv = csv.DictReader(file)
 
         for linha in restaurantes_csv:
+            ponto = wkt.loads(linha["GEOMETRIA"])
             restaurante = Restaurante(
                 id_restaurante=linha["_id"],
                 nome=linha["NOME"],
                 latitude=float(linha["LATITUDE"]),
                 longitude=float(linha["LONGITUDE"]),
+                x=ponto.x,
+                y=ponto.y,
                 desc_logradouro=linha["DESC_LOGRADOURO"],
                 nome_logradouro=linha["NOME_LOGRADOURO"],
                 numero=linha["NUMERO_IMOVEL"],
@@ -62,3 +86,39 @@ def ler_bares()->list[Restaurante]:
             restaurantes.append(restaurante)
     
     return restaurantes
+
+def criar_entregadores(registros) -> list[Entregador]:
+    entregadores = []
+
+    for linha in registros:
+        entregador = Entregador(
+            id_Entregador=linha["id_entregador"],
+            latitude=float(linha["latitude_rua_graus"]),
+            longitude=float(linha["longitude_rua_graus"]),
+            x = float(linha["x_rua_metros"]),
+            y = float(linha["y_rua_metros"]),
+            aresta_u=(
+                int(linha["aresta_u"])
+                if linha.get("aresta_u") not in (None, "")
+                else None
+            ),
+            aresta_v=(
+                int(linha["aresta_v"])
+                if linha.get("aresta_v") not in (None, "")
+                else None
+            ),
+            aresta_key=(
+                int(linha["aresta_key"])
+                if linha.get("aresta_key") not in (None, "")
+                else None
+            ),
+            posicao_aresta_metros=(
+                float(linha["posicao_aresta_metros"])
+                if linha.get("posicao_aresta_metros") not in (None, "")
+                else None
+            ),
+        )
+
+        entregadores.append(entregador)
+
+    return entregadores
