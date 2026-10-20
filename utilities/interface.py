@@ -1,4 +1,5 @@
 import pandas as pd
+from dash import html
 import dash_leaflet as dl
 from osmnx.distance import great_circle
 
@@ -76,3 +77,45 @@ def plota_mapa_interface(
             children=dl.Tooltip(str(restaurante.get("NOME", "Restaurante"))),
         ))
     return marcadores
+
+
+def montar_tabela_rotas(resultados):
+    if not resultados:
+        return html.P("Nenhum entregador para exibir nesta consulta.")
+
+    linhas = []
+
+    for resultado in resultados:
+        distancia = resultado["distancia_metros"]
+        tempo = resultado["tempo_segundos"]
+
+        linhas.append(html.Tr([
+            html.Td(resultado["id_entregador"]),
+            html.Td(f'{resultado["latitude"]:.6f}'),
+            html.Td(f'{resultado["longitude"]:.6f}'),
+            html.Td(
+                "Sem rota"
+                if distancia is None
+                else f"{distancia:.1f}"
+            ),
+            html.Td(
+                "Sem rota"
+                if tempo is None
+                else f"{tempo / 60:.2f}"
+            ),
+        ]))
+
+    return html.Table([
+        html.Thead(html.Tr([
+            html.Th("ID"),
+            html.Th("Latitude"),
+            html.Th("Longitude"),
+            html.Th("Distância pelas ruas (m)"),
+            html.Th("Tempo estimado (min)"),
+        ])),
+        html.Tbody(linhas),
+    ], style={
+        "width": "100%",
+        "textAlign": "left",
+        "borderCollapse": "collapse",
+    })
