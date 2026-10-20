@@ -96,13 +96,10 @@ tropafood/
 │   ├── constants.py             # Configurações compartilhadas
 │   ├── files.py                 # Leitura de dados
 │   └── interface.py             # Preparação do mapa
-├── dockerfile                  
-├── main.py                      
-└── requirements.txt             
+├── dockerfile                
+├── main.py                    
+└── requirements.txt
 ```
-
-`src/geohash.py` e `src/trie.py` documenta aqui @raiz
-
 
 # Documentação Detalhada
 
@@ -110,7 +107,46 @@ tropafood/
 
 ## 2. Indexação Geohash
 
-## 3. Árvore Trie
+*Geohashing* é um método de indexação capaz de converter coordenadas geográficas, como latitude e longitude, para uma string. A ideia é justamente converter duas dimensões (x, y) para uma única dimensão z. Essa string é definida na base 32 (`todos os números de 0-9 e letras do alfabeto - (a, l, i, o`), consistindo de 8 níveis na nossa implementação.
+
+O algoritmo funciona da seguinte forma: Definimos limites superiores e inferiores para a latitude e longitude da terra, respectivamente $[-90, 90]$ e $[-180, 180]$, e então começamos a definir uma cadeia binária $Z$, que será constituida intercalando bits de longitude e latitude a cada iteração. Ao final, como queremos 8 caracteres na base 32, temos que ter um total de 40 bits, ou seja, vamos realizar 20 intercalações, nas quais cada uma adiciona 2 bits (longitude e latitude).
+
+A intercalação funciona da seguinte forma (tanto para a longtitude quanto para a latitude, comparados com os seus respectivos limites):
+
+1. Calculamos a coordenada média (ex: `long_mid = (long_upper + long_lower)/2`)
+2. Checamos se a coordenada é maior ou menor que a coordenada média:
+   1. se for maior ou igual, então devemos subir o limite inferior da coordenada e adicionar 1 na cadeia binária $Z$.
+   2. se for menor, então devemos reduzir o limite superior da coordenada e adicionar 0 na cadeia binária $Z$.
+
+A ideia é ter uma cadeia que represente a seguinte malha:
+
+![1792531821498](image/README/1792531821498.png)
+
+Ao final da intercalação, teremos uma cadeia de 40 bits intercados (20 de longitude e 20 de latitude). Agora, precisamos converter essa string binária para a base 32 e obter o geohash. Podemos fazer isso transformando cada 5 bits de $Z$ em um caractere base32.
+
+Ao final, teremos uma indexação de 8 caracteres, como por exemplo: "7h2whsem". Essa string é referente à seguinte região em um mapa:
+![1792532107160](image/README/1792532107160.png)
+
+## 3. Árvore Trie Compacta
+
+A árvore Trie Compacta, é uma estrutura de dados vista nas aulas que é, em essência uma árvore de prefixos. A ideia é armazenar strings de uma forma que seja fácil encontrar strings com prefixos iguais. Em nosso código, os seus nós são representados pela classe *TrieNode* que é composta por 3 atributos:
+
+- *rotulo:* é a string armazenada naquele nó; (maior diferença em relação a Trie normal, aqui nós guardamos strings, e não somente o caractere)
+- *filhos:* é um dicionário contendo os nós-filho daquele nó;
+- *entregadores:* é uma lista dos entregadores que estão vinculados àquele rótulo terminal. Note que um entregador só constará na lista se o seu geohash terminar a sua inserção na Trie naquele nó. Esse atributo pode ser utilizado para saber se aquele nó é um nó com valor (possui entregador) ou não, basta verificar se a lista está vazia ou não.
+
+Além disso, nós implementamos dois métodos para a classe *TrieCompacta:* 
+
+*1. insert(entregador): $O(m)$, tal que m é o tamanho da string.* É responsável por inserir o geohash do entregador passado como parâmetro, vamos chamar de $g$ na árvore. Percorremos a árvore toda, partindo da raiz e consumindo a string $g$ com o passar dos nós. A ideia é, estando no nó atual, sempre buscar se existe algum filho com o caractere inicial que bate com o caractere na posição [0] do fragmento da cadeia $g$ que ainda não foi consumido.
+
+Se não existir, então cria-se um nó filho na Trie com todo o rótulo restante.
+
+Se existir, então  caminhamos até o filho e avaliamos como ele consegue consumir completamente o fragmento de $g$. Nós usamos uma função capaz de encontrar o maior prefixo entre duas strings. $O(min(s_1, s_2))$.
+
+- Se o fragmento completamente consumido e o seu tamanho for igual ao do rótulo no nó, isso quer dizer que esse nó possui valor e deve adicionar o entregador que possui aquele geohash $g$ na lista de entregadores.
+- Se o fragmento foi parcialmente consumido, então deve-se o nó da seguinte forma: definir dois filhos e um pai. O pai conterá como rótulo o prefixo em comum entre o fragmento de $g$ e o rótulo do nó antigo. O restante do rótulo do nó antigo e o restante não consumido de $g$ devem ser nós-filho.
+
+2. *search(geohash): $O(m + k)$, tal que m é o tamanho da string.* Na busca, queremos buscar quais os entregadores referentes a um determinado geohash. Note que aqui existe uma sacada: Um geohash que é completamente consumido em um vértice pai deve considerar todos os entregadores dos filhos também, pois estes estão contidos no geohash pai. A busca funciona de forma parecida com a inserção, nós vamos percorremos a string $g$. até que seja completamente consumida dentro da árvore. Se não conseguimos, então retornamos uma lista vazia e a busca falha. Se conseguimos, temos que buscar todos os entregadores daquele nó, considerando também os filhos dele. Fazemos isso utilizando recursividade, parecido com uma DFS $O(k)$, tal que temos $k$ entregadores encontrados, que agrega os entregadores de cada nó.
 
 ## 4. Simulador de Geração de Entregadores
 
@@ -121,7 +157,7 @@ A modulo `src/simulador.py` contém a geração e a correção das posições do
 A função `gerar_entregadores_normais` é responsável pela geração da posição inicial dos entregadores. Dado N sendo o Número de Entregadores a serem gerados e M o número de restaurante, a geração é feita da seguinte forma:
 
 - lê a geometria de cada bar e usa suas coordenadas $x$, $y$, projetadas em metros como centro da distribuição normal.
-- A quantidade solicitada é dividida entre os bares: todos recebem a mesma inteira quantidade $E$, obtida através de \(\lfloor N/M \rfloor\), e o resto R, caso a divisão não seja inteira, é distribuído aleatoriamente entre alguns bares. 
+- A quantidade solicitada é dividida entre os bares: todos recebem a mesma inteira quantidade $E$, obtida através de \(\lfloor N/M \rfloor\), e o resto R, caso a divisão não seja inteira, é distribuído aleatoriamente entre alguns bares.
 - Para cada posição, são geradas coordenadas $x$ e $y$ com o desvio padrão configurado, que por padrão é 400 metros, a fim de não serem gerados varios entregadores no mesmo ponto.
 
 Cada entregador recebe um id, o nome do bar de origem, as coordenadas matemáticas em metros ('EPSG:31983') e sua conversão para latitude e longitude ('EPSG:4326').
@@ -165,14 +201,15 @@ Em `utilities/files.py`, a geometria dos restaurantes é interpretada para preen
 ## 5. Interface do mapa
 
 O módulo `utilities/interface.py` prepara os dados para o gráfico Plotly. Os pontos são exibidos da seguinte forma
-- Bares: Azul; 
+
+- Bares: Azul;
 - Bar Selecionado: Verde;
 - Entregadores Filtrados: Vermelho;
 - Entregadores não-Filtrados: Cinza;
-  
+
 # ADICONAR AQUI FOTO POS FILTRAGEM CIRCULANDO OS PONTOS
 
-## 6. Aplicação web 
+## 6. Aplicação web
 
 O arquivo `app.py` monta a aplicação Dash. Na abertura, carrega os bares e apresenta o mapa inicial, a princípio sem os entregadores. A página possui um campo para inserir a quantidade de entregadores a serem gerados, um botão para a geração e uma opção para salvar os resultados em CSV.
 
@@ -180,7 +217,7 @@ Ao clicar no botão, o callback valida a quantidade de entregadores, onde é nec
 
 A página também possui um checkbox **Salvar CSVs desta geração**, quando este esta marcado, o app grava dois arquivos: um com as posições matemáticas e outro com as posições corrigidas. Os nomes recebem um identificador de data e hora e um código aleatorio, a fim de evitar a sobrescrição dos arquivos gerados anteriormente.
 
-Além disso, também conta com um campo para selecionar algum bar em específico e traçar a busca por entregadores em um determinado raio de distância, que também pode ser configurado. 
+Além disso, também conta com um campo para selecionar algum bar em específico e traçar a busca por entregadores em um determinado raio de distância, que também pode ser configurado.
 
 Os registros da geração são mantidos em um `dcc.Store` em memória no navegador. Isso permite trocar o restaurante e comparar os percursos dos mesmos entregadores, sem gerar novas posições. Uma nova geração substitui os registros anteriores, e recarregar a página limpa esse armazenamento.
 
@@ -215,9 +252,6 @@ O tempo dos trechos parciais é calculado utilizando a velocidade da aresta corr
 O critério da busca continua sendo a menor distância. O tempo apresentado corresponde a esse mesmo percurso, sem uma busca separada pela rota mais rápida. A estimativa não considera trânsito, semáforos, paradas ou preparação do pedido.
 
 As verificações realizadas incluíram trechos parciais, sentidos disponíveis, pontos nos extremos, arestas paralelas e ausência de caminho. Também foram conferidas a associação dos resultados aos IDs, a ordenação e a atualização das consultas sem regenerar as posições dos entregadores.
-
-
-
 
 ## INTEGRANTES
 
