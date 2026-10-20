@@ -13,16 +13,18 @@ def carrega_entregadores_corrigidos():
 
     return df_entregadores, df_bares
 
-def filtrar_entregadores_por_raio(df_entregadores, restaurante, raio_metros):
-    if df_entregadores.empty:
-        return df_entregadores
+def plota_mapa_interface(df_entregadores, df_bares, indice_restaurante_selecionado=None):
+    partes_mapa = []
 
-    distancias = great_circle(
-        restaurante["LATITUDE"], restaurante["LONGITUDE"],
-        df_entregadores["latitude_rua_graus"].to_numpy(),
-        df_entregadores["longitude_rua_graus"].to_numpy(),
-    )
-    return df_entregadores.loc[distancias <= raio_metros]
+    if not df_bares.empty:
+        df_bares = df_bares.copy()
+        df_bares["status"] = "Restaurante"
+        if indice_restaurante_selecionado is not None:
+            df_bares.loc[indice_restaurante_selecionado, "status"] = "Restaurante selecionado"
+        df_bares["nome_exibicao"] = df_bares.get("NOME", "Bar")
+        df_bares["lat"] = df_bares["LATITUDE"]
+        df_bares["lon"] = df_bares["LONGITUDE"]
+        partes_mapa.append(df_bares[["status", "nome_exibicao", "lat", "lon"]])
 
 def plota_mapa_interface(
     df_entregadores, df_bares, indice_restaurante_selecionado=None,
@@ -32,10 +34,38 @@ def plota_mapa_interface(
     if indice_restaurante_selecionado is not None:
         restaurante = df_bares.iloc[int(indice_restaurante_selecionado)]
 
-    df_entregadores = df_entregadores.assign(dentro_raio=False)
-    if restaurante is not None:
-        entregadores_no_raio = filtrar_entregadores_por_raio(
-            df_entregadores, restaurante, raio_metros
+    if partes_mapa:
+        df_mapa = pd.concat(partes_mapa, ignore_index=True)
+
+        if indice_restaurante_selecionado is not None and not df_bares.empty:
+            restaurante_selecionado = df_bares.iloc[indice_restaurante_selecionado]
+            lat_centro = restaurante_selecionado["LATITUDE"]
+            lon_centro = restaurante_selecionado["LONGITUDE"]
+        elif not df_bares.empty:
+            lat_centro = df_bares["LATITUDE"].mean()
+            lon_centro = df_bares["LONGITUDE"].mean()
+        else:
+            lat_centro = df_entregadores["latitude_rua_graus"].mean()
+            lon_centro = df_entregadores["longitude_rua_graus"].mean()
+
+        cores_status = {
+            "Entregador Filtrado dentro do raio": "red",
+            "Entregador Fora do raio": "gray",
+            "Restaurante": "blue",
+            "Restaurante selecionado": "green",
+        }
+
+        fig = px.scatter_map(
+            df_mapa,
+            lat="lat",
+            lon="lon",
+            color="status",
+            color_discrete_map=cores_status,
+            hover_name="nome_exibicao",
+            zoom=15 if indice_restaurante_selecionado is not None else 12,
+            height=650,
+            title="Mapa de Bares e Entregadores",
+            map_style="basic"
         )
         df_entregadores["dentro_raio"] = df_entregadores.index.isin(entregadores_no_raio.index)
 
@@ -52,7 +82,11 @@ def plota_mapa_interface(
             opacity=opacidade, fillOpacity=opacidade,
             children=dl.Tooltip(str(entregador["id_entregador"])),
         )
-        marcadores.append(marcador)
+        if indice_restaurante_selecionado is not None:
+            fig.update_traces(
+                marker={"size": 24},
+                selector={"name": "Restaurante selecionado"},
+            )
 
     if exibir_restaurantes:
         for indice, bar in df_bares.iterrows():

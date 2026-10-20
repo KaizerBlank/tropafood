@@ -3,7 +3,7 @@ import pandas as pd
 import osmnx as ox
 import geopandas as gpd
 from shapely import wkt
-from shapely.geometry import LineString
+from shapely.geometry import LineString, Point
 from utilities.constants import (
     CRS_GRAUS,
     CRS_METROS,
@@ -82,6 +82,7 @@ def corrigir_para_ruas(df_entregadores, G):
 
     xs_metros_rua = []
     ys_metros_rua = []
+    posicoes_arestas_metros = []
 
     arestas = ox.distance.nearest_edges(
         G, 
@@ -97,8 +98,19 @@ def corrigir_para_ruas(df_entregadores, G):
             (G.nodes[u]["x"], G.nodes[u]["y"]), 
             (G.nodes[v]["x"], G.nodes[v]["y"])
         ]))
-        
-        ponto_projetado = line.interpolate(line.project(geom))
+
+        ponto_u = Point(G.nodes[u]["x"], G.nodes[u]["y"])
+
+        inicio = Point(line.coords[0])
+        fim = Point(line.coords[-1])
+
+        if ponto_u.distance(fim) < ponto_u.distance(inicio):
+            line = LineString(list(line.coords)[::-1])
+
+        posicao_metros = line.project(geom)
+        ponto_projetado = line.interpolate(posicao_metros)
+
+        posicoes_arestas_metros.append(float(posicao_metros))
         
         xs_metros_rua.append(ponto_projetado.x)
         ys_metros_rua.append(ponto_projetado.y)
@@ -106,6 +118,20 @@ def corrigir_para_ruas(df_entregadores, G):
     df_entregadores = df_entregadores.copy()
     df_entregadores["x_rua_metros"] = xs_metros_rua
     df_entregadores["y_rua_metros"] = ys_metros_rua
+
+    df_entregadores["aresta_u"] = [
+        int(aresta[0]) for aresta in arestas
+    ]
+
+    df_entregadores["aresta_v"] = [
+        int(aresta[1]) for aresta in arestas
+    ]
+
+    df_entregadores["aresta_key"] = [
+        int(aresta  [2]) for aresta in arestas
+    ]
+
+    df_entregadores["posicao_aresta_metros"] = posicoes_arestas_metros
 
     gdf_rua_metros = gpd.GeoDataFrame(
         df_entregadores,

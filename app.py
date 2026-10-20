@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
-import dash_leaflet as dl
+from utilities.files import criar_entregadores
+
 import pandas as pd
 from dash import Dash, Input, Output, State, html, dcc, no_update
 from utilities.constants import (
@@ -12,44 +13,33 @@ from utilities.constants import (
 )
 from src.grafo import obter_malha
 from src.simulador import corrigir_para_ruas, gerar_entregadores_normais
+from src.frota import Frota
 from utilities.interface import plota_mapa_interface
 
 df_bares = pd.read_csv(CSV_BARES).dropna(
     subset=["GEOMETRIA", "LATITUDE", "LONGITUDE"]
 ).reset_index(drop=True)
-CENTRO_INICIAL = (
-    [df_bares["LATITUDE"].mean(), df_bares["LONGITUDE"].mean()]
-)
+df_entregadores = pd.DataFrame()
+
+fig = plota_mapa_interface(df_entregadores, df_bares)
 
 app = Dash()
-app.title = "Tropafood"
-app.layout = html.Main([
-    dcc.Store(id="dados-entregadores", data=[]),
-    dl.Map([
-        dl.TileLayer(
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        ),
-        dl.LayerGroup(id="camadas-mapa"),
-        dl.ZoomControl(position="topright"),
-    ], id="mapa-entregadores", center=CENTRO_INICIAL, zoom=12,
-        zoomControl=False, className="mapa"),
-    html.Section([
-        html.Header([
-            html.H1("Tropafood"),
-            html.P("Belo Horizonte", className="localidade"),
-        ], className="cabecalho"),
-        html.Label("Restaurante", htmlFor="busca-restaurante"),
-        dcc.Dropdown(
-            id="busca-restaurante",
-            options=[
-                {"label": str(bar.get("NOME", "Restaurante")), "value": indice}
-                for indice, bar in df_bares.iterrows()
-            ],
-            placeholder="Buscar restaurante pelo nome",
-            clearable=True, searchable=True,
-        ),
-        html.Label("Raio de busca (metros)", htmlFor="raio-busca"),
+
+app.layout = html.Div([
+    html.H1(children='TP1 - ALG2', style={'textAlign':'center'}),
+    dcc.Dropdown(
+        id="busca-restaurante",
+        options=[
+            {"label": str(bar.get("NOME", "Restaurante")), "value": indice}
+            for indice, bar in df_bares.iterrows()
+        ],
+        placeholder="Buscar restaurante pelo nome",
+        clearable=True,
+        searchable=True,
+        style={"maxWidth": "520px", "margin": "0 auto 12px"},
+    ),
+    html.P("Quantidade de entregadores", style={'textAlign':'center'}),
+    html.Div([
         dcc.Input(
             id="raio-busca", type="number", min=100, max=50000,
             step=100, value=1000, debounce=True, className="campo-numero",
@@ -127,12 +117,20 @@ def centralizar_restaurante(restaurante_indice):
     Input("gerar-entregadores", "n_clicks"),
     State("quantidade-entregadores", "value"),
     State("salvar-csv", "value"),
+    State("busca-restaurante", "value"),
     prevent_initial_call=True,
     running=[(Output("gerar-entregadores", "disabled"), True, False)],
 )
-def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
+def atualizar_mapa(
+    n_clicks,
+    quantidade_entregadores,
+    salvar_csv=None,
+    restaurante_indice=None,
+):
     if quantidade_entregadores is None or quantidade_entregadores < 1 or not float(quantidade_entregadores).is_integer():
-        return no_update, "Quantidade não aceita. Use um inteiro maior que zero."
+        return no_update, "Informe uma quantidade_entregadores inteira maior que zero."
+    if restaurante_indice is not None and not 0 <= int(restaurante_indice) < len(df_bares):
+        return no_update, "Restaurante não encontrado."
 
     try:
         df_entregadores_matematicos = gerar_entregadores_normais(
@@ -142,7 +140,26 @@ def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
         )
         grafo = obter_malha()
         df_entregadores = corrigir_para_ruas(df_entregadores_matematicos, grafo)
-        mensagem = f"{len(df_entregadores)} entregadores gerados."
+        registros = df_entregadores.to_dict(orient="records")
+        entregadores = criar_entregadores(registros)
+        frota = Frota(entregadores)
+
+        df_entregadores["geohash"] = [
+            entregador.geohash
+            for entregador in frota.entregadores
+        ]
+
+        figura = plota_mapa_interface(
+            df_entregadores,
+            df_bares,
+            indice_restaurante_selecionado=(
+                int(restaurante_indice)
+                if restaurante_indice is not None
+                else None
+            ),
+        )
+
+        mensagem = f"{len(frota.entregadores)} entregadores gerados e indexados na Trie."
         if "salvar" in (salvar_csv or []):
             entregadores_matematico, entregadores_corrigido = salvar_csvs_entregadores(
                 df_entregadores_matematicos, df_entregadores
