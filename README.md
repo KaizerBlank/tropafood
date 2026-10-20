@@ -148,7 +148,6 @@ Se existir, então  caminhamos até o filho e avaliamos como ele consegue consum
 
 2. *search(geohash): $O(m + k)$, tal que m é o tamanho da string.* Na busca, queremos buscar quais os entregadores referentes a um determinado geohash. Note que aqui existe uma sacada: Um geohash que é completamente consumido em um vértice pai deve considerar todos os entregadores dos filhos também, pois estes estão contidos no geohash pai. A busca funciona de forma parecida com a inserção, nós vamos percorremos a string $g$. até que seja completamente consumida dentro da árvore. Se não conseguimos, então retornamos uma lista vazia e a busca falha. Se conseguimos, temos que buscar todos os entregadores daquele nó, considerando também os filhos dele. Fazemos isso utilizando recursividade, parecido com uma DFS $O(k)$, tal que temos $k$ entregadores encontrados, que agrega os entregadores de cada nó.
 
-
 ## 4. Simulador de Geração de Entregadores
 
 A modulo `src/simulador.py` contém a geração e a correção das posições dos entregadores, distribuindo os entregadores equitativamente entre os restaurantes por meio de uma distrbuição normal centrada em cada um dos restaurantes.
