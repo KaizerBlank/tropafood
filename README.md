@@ -10,6 +10,10 @@ TP1 ALG II
 - Para nao gerar todos os entregadores no mesmo ponto, gera posições ao redor dos bares usando uma distribuição normal com desvio padrão de 400 metros.
 - Ajusta cada posição para algum ponto da aresta (rua) mais proxima usando a malha viária do OpenStreetMap, via OSMnx.
 - Permite salvar os resultados em CSV pela opção **Salvar CSVs desta geração**.
+- Organiza os entregadores em uma Frota integrada à Trie compacta.
+- Calcula a distância pelas ruas até o restaurante selecionado.
+- Estima o tempo utilizando a velocidade de cada trecho do percurso.
+- Apresenta os resultados em uma tabela ordenada pela distância viária.
 
 ## Requisitos
 
@@ -57,7 +61,11 @@ No modo terminal, os arquivos são gravados nos caminhos fixos `data/entregadore
 
 ## Malha viária
 
-Na primeira geração, `src/grafo.py` baixa a malha viaria de Belo Horizonte, converte para metros (`EPSG:31983`) e salva uma cópia em `data/malha_bh_drive_31983.graphml`. Nas execuções seguintes, reutiliza o arquivo ja gerado
+O módulo `src/grafo.py` obtém a malha viária de Belo Horizonte com o OSMnx, utilizando o tipo de rede `drive`. Essa escolha permite trabalhar com uma rede destinada à circulação de veículos e aproveitar as funções da biblioteca para obtenção, simplificação e cálculo dos percursos.
+
+O grafo é dirigido para representar os sentidos disponíveis e é reprojetado para `EPSG:31983`, permitindo trabalhar com posições em metros. As arestas são identificadas por `(u, v, key)`: a chave distingue possíveis arestas paralelas entre os mesmos nós, e o atributo `length` representa o comprimento utilizado nas rotas.
+
+A malha é salva em `data/malha_bh_drive_31983.graphml` e reutilizada nas execuções seguintes. O armazenamento local evita repetir o download e o processamento inicial, além de permitir utilizar a mesma malha durante os testes.
 
 ## Geocodificador
 
@@ -82,6 +90,8 @@ tropafood/
 │   ├── simulador.py             # Geração e ajuste das posições
 │   ├── geohash.py               # Estrutura de geohash
 │   └── trie.py                  # Estrutura Trie
+│   ├── frota.py                 # Organização dos entregadores e resultados
+│   ├── rotas.py                 # Cálculo de distância e tempo pelas ruas
 ├── utilities/
 │   ├── constants.py             # Configurações compartilhadas
 │   ├── files.py                 # Leitura de dados
@@ -123,7 +133,11 @@ Como o exemplo a seguir mostra, essa geração ainda não é a ideal, uma vez qu
 
 ![alt text](assets/images/frota_mat.png)
 
-Inicialmente, essa função realizava a geração tendo graus como base de medida (latitude e longitude), porém, essa medida é menos intuitiva, uma vez que o desvio padrão também deveria ser na mesma medida, onde 0.001 graus de desvio padrão significava cerca de 1km em cada direção, tornando o entendimento menos direto.
+A geração utiliza coordenadas projetadas em `EPSG:31983`, cuja unidade é o metro. Essa escolha permite configurar o desvio padrão diretamente como uma distância, tornando mais claro o significado dos 400 metros utilizados na distribuição.
+
+Latitude e longitude são mantidas em `EPSG:4326`, em graus, para a exibição no mapa e a codificação Geohash. Dessa forma, cada representação atende a uma finalidade: coordenadas métricas para geração e operações sobre as ruas, e coordenadas geográficas para apresentação e indexação.
+
+A geometria e a latitude/longitude permanecem na mesma tabela para preservar a associação com os dados do restaurante. O formato `POINT`, por si só, não determina a unidade da geometria; essa unidade depende do sistema de coordenadas adotado.
 
 ### 4.2 Restrição Viária (Realismo Geográfico)
 
@@ -133,6 +147,10 @@ A função `corrigir_para_ruas` recebe a tabela com os entregadores e suas posi�
 
 Para encaixar os entregadores sobre a linha real das ruas, a função chama `nearest_edges` do osmnx, que identifica o trecho de rua mais próximo de cada ponto matemático. A partir daí, é extraída a geometria da rua. Utilizando o Shapely, o ponto é projetado sobre essa linha: o método `project` descobre a posição exata ao longo do trecho e o `interpolate` pega as novas coordenadas. Como toda essa operação ocorre em metros `EPSG:31983`, as distâncias e projeções são tratadas em metros. Por fim, as coordenadas corrigidas são convertidas para graus (latitude e longitude `EPSG:4326`) para a renderização no mapa da interface.
 
+Além das coordenadas corrigidas, são armazenados os campos `aresta_u`, `aresta_v`, `aresta_key` e `posicao_aresta_metros`. Eles identificam a aresta associada ao entregador e sua posição ao longo da geometria orientada de u para v.
+
+Preservar essas informações permite reutilizar a associação com a rua nas consultas posteriores e representar o entregador no meio de um trecho, sem restringir sua posição aos cruzamentos.
+
 A seguir, temos um exemplo da geração com a correção aplicada, onde todos os entregadores são plotados dentro das ruas.
 
 **Pontos em Vermelho: Entregadores**
@@ -141,6 +159,8 @@ A seguir, temos um exemplo da geração com a correção aplicada, onde todos os
 ![alt text](assets/images/frota_rua.png)
 
 O simulador, além de utilizado na interface, pode ser executado pelo terminal. Nesse modo, ele solicita a quantidade de entregadores e grava os CSVs matemáticos e corrigidos nos caminhos padrão definidos em `utilities/constants.py`.
+
+Em `utilities/files.py`, a geometria dos restaurantes é interpretada para preencher suas coordenadas x e y. Os entregadores são criados com as coordenadas corrigidas e os metadados da aresta, preservando essas informações desde a leitura dos dados até o cálculo das rotas.
 
 ## 5. Interface do mapa
 
@@ -162,7 +182,40 @@ A página também possui um checkbox **Salvar CSVs desta geração**, quando est
 
 Além disso, também conta com um campo para selecionar algum bar em específico e traçar a busca por entregadores em um determinado raio de distância, que também pode ser configurado. 
 
-Por fim, ao selecionar um restaurante e passar um valor para o raio de busca, uma tabela com os entregadores dentro do raio é exibida, contendo o Id do entregador, posição, distância até o restaurante, e tempo estimado baseado em uma velocidade média. (DEVE SER IMPLEMENTADO AINDA ESSA ULTIMA PARTE)
+Os registros da geração são mantidos em um `dcc.Store` em memória no navegador. Isso permite trocar o restaurante e comparar os percursos dos mesmos entregadores, sem gerar novas posições. Uma nova geração substitui os registros anteriores, e recarregar a página limpa esse armazenamento.
+
+Os callbacks separam a geração, a atualização do mapa e a consulta das rotas. Essa organização evita que uma mudança de restaurante execute novamente a geração dos entregadores.
+
+A função `montar_tabela_rotas()`, em `utilities/interface.py`, mantém a ordenação fornecida pela Frota. A distância é apresentada em metros, e o tempo é convertido de segundos para minutos somente na exibição. Resultados sem caminho aparecem como **Sem rota**, diferenciando essa situação de um percurso com distância zero.
+
+## 7. Organização da Frota
+
+A classe `Frota`, em `src/frota.py`, reúne os objetos `Entregador` e sua integração com a Trie compacta. Na construção da Frota, os Geohashes são calculados a partir das coordenadas corrigidas, e os entregadores são inseridos no índice.
+
+O método `_localizar_entregador()` prepara a posição de cada entregador na malha, aproveitando a identificação da aresta armazenada. Quando todos os identificadores estão ausentes, procura a rua mais próxima; quando estão parcialmente preenchidos, informa o problema.
+
+O método `calcular_rotas()` recebe o grafo, as coordenadas métricas do restaurante e uma lista de entregadores selecionados. Ele solicita os percursos ao módulo de rotas, associa os resultados aos IDs e depois ordena pela distância.
+
+Essa divisão permite que a seleção espacial forneça os candidatos, que o módulo de rotas calcule os percursos e que a Frota organize os resultados para a interface. A associação aos IDs acontece antes da ordenação para preservar a correspondência entre cada entregador e suas medidas.
+
+Os resultados são retornados em novos registros, sem modificar os objetos originais. Quando não existe caminho, distância e tempo recebem `None`, e o entregador fica ao final da lista.
+
+## 8. Cálculo das rotas e do tempo
+
+O módulo `src/rotas.py` calcula os percursos utilizando a malha viária. A distância pelas ruas foi escolhida porque a proximidade geográfica não representa necessariamente o deslocamento disponível: um entregador pode precisar contornar um quarteirão ou seguir outro sentido de circulação.
+
+A função `obter_geometria_aresta()` recupera o traçado de uma aresta existente e o orienta de u para v. Quando não há geometria explícita, utiliza um segmento entre esses nós. Esse procedimento representa uma conexão já existente no grafo, sem criar uma rua nova. As curvas dos trechos unidos pela simplificação do OSMnx são preservadas na geometria resultante.
+
+A função `calcular_rotas_osmnx()` utiliza a busca de menor caminho do OSMnx com o peso `length`. Como entregadores e restaurantes podem estar no meio das ruas, são adicionados nós e conexões em uma cópia temporária do grafo. Isso permite considerar os trechos parciais de saída e chegada e preservar a malha original. Também é tratado o caso em que origem e destino estão na mesma aresta.
+
+Para estimar o tempo, a função `preparar_tempos()`, em `src/grafo.py`, acrescenta os atributos `speed_kph`, em km/h, e `travel_time`, em segundos. A preparação utiliza as velocidades informadas no OSM e estima os valores ausentes com base nas velocidades disponíveis e na categoria da via.
+
+O tempo dos trechos parciais é calculado utilizando a velocidade da aresta correspondente. Ao percorrer a rota, distância e tempo são somados sobre as mesmas arestas, inclusive quando existem arestas paralelas. Isso evita combinar a distância de uma via com o tempo de outra.
+
+O critério da busca continua sendo a menor distância. O tempo apresentado corresponde a esse mesmo percurso, sem uma busca separada pela rota mais rápida. A estimativa não considera trânsito, semáforos, paradas ou preparação do pedido.
+
+As verificações realizadas incluíram trechos parciais, sentidos disponíveis, pontos nos extremos, arestas paralelas e ausência de caminho. Também foram conferidas a associação dos resultados aos IDs, a ordenação e a atualização das consultas sem regenerar as posições dos entregadores.
+
 
 
 

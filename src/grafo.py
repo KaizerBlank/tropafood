@@ -11,7 +11,8 @@ def obter_malha():
     arquivo = pasta / "malha_bh_drive_31983.graphml"
 
     if arquivo.exists():
-        return ox.io.load_graphml(arquivo)
+        grafo = ox.io.load_graphml(arquivo)
+        return preparar_tempos(grafo)
 
     # Gera o grafo da malha viaria de BH
     grafo = ox.graph.graph_from_place(
@@ -27,6 +28,14 @@ def obter_malha():
         to_crs = "EPSG:31983",
     )
 
+    grafo = preparar_tempos(grafo)
+
     ox.io.save_graphml(grafo, arquivo)
     
+    return grafo
+
+def preparar_tempos(grafo):
+    grafo = ox.routing.add_edge_speeds(grafo)
+    grafo = ox.routing.add_edge_travel_times(grafo)
+
     return grafo

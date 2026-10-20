@@ -2,11 +2,13 @@ import osmnx as ox
 from shapely.geometry import LineString, Point
 from itertools import count
 
+# Obtem a geometria da aresta (u, v, key) orientada de u para v
 def obter_geometria_aresta(grafo, u, v, key):
     dados = grafo.edges[u, v, key]
 
     linha = dados.get("geometry")
-
+    # Se nao houver geometria, cria uma linha entre dois nós 
+    # conferir se estou criando uma linha atrevessando lugares invalidos
     if linha is None:
         linha = LineString([
             (grafo.nodes[u]["x"], grafo.nodes[u]["y"]),
@@ -111,7 +113,7 @@ def obter_sentidos_permitidos(grafo, localizacao):
 
     return sentidos
 
-def calcular_distancias_osmnx(grafo, origens, destino):
+def calcular_rotas_osmnx(grafo, origens, destino):
     if not grafo.is_directed():
         raise ValueError("O cálculo exige um grafo dirigido.")
 
@@ -135,6 +137,22 @@ def calcular_distancias_osmnx(grafo, origens, destino):
 
         return no
 
+    def adicionar_trecho(inicio, fim, aresta, distancia_metros):
+        dados = grafo.edges[aresta]
+
+        velocidade_metros_segundo = float(dados["speed_kph"] / 3.6)
+
+        tempo_segundos = (
+            float(distancia_metros) / velocidade_metros_segundo
+        )
+
+        temporario.add_edge(
+            inicio,
+            fim,
+            length=float(distancia_metros),
+            travel_time=tempo_segundos,
+        )
+
     sentidos_destino = obter_sentidos_permitidos(
         grafo, destino
     )
@@ -149,15 +167,20 @@ def calcular_distancias_osmnx(grafo, origens, destino):
             grafo.edges[u, v, key]["length"]
         )
 
-        temporario.add_edge(
-            u, no_destino, length=posicao
+        adicionar_trecho(
+            u,
+            no_destino,
+            aresta,
+            posicao,
         )
 
         if posicao == comprimento:
-            temporario.add_edge(
-                v, no_destino, length=0.0
+            adicionar_trecho(
+                v,
+                no_destino,
+                aresta,
+                0.0,
             )
-
     nos_origem = []
 
     for origem in origens:
@@ -176,17 +199,20 @@ def calcular_distancias_osmnx(grafo, origens, destino):
             )
 
             # Trecho entre o entregador e o fim da aresta
-            temporario.add_edge(
+            adicionar_trecho(
                 no_origem,
                 v,
-                length=comprimento - posicao,
+                aresta,
+                comprimento - posicao,
             )
 
             if posicao == 0.0:
-                temporario.add_edge(
-                    no_origem, u, length=0.0
+                adicionar_trecho(
+                    no_origem,
+                    u,
+                    aresta,
+                    0.0,
                 )
-
             # Origem e destino podem estar na mesma rua
             posicao_destino = sentidos_destino.get(aresta)
 
@@ -194,10 +220,11 @@ def calcular_distancias_osmnx(grafo, origens, destino):
                 posicao_destino is not None
                 and posicao_destino >= posicao
             ):
-                temporario.add_edge(
+                adicionar_trecho(
                     no_origem,
                     no_destino,
-                    length=posicao_destino - posicao,
+                    aresta,
+                    posicao_destino - posicao
                 )
 
     caminhos = ox.routing.shortest_path(
@@ -208,23 +235,31 @@ def calcular_distancias_osmnx(grafo, origens, destino):
         cpus=1,
     )
 
-    distancias = []
+    resultados = []
 
     for caminho in caminhos:
         if caminho is None:
-            distancias.append(None)
+            resultados.append({
+                "distancia_metros": None,
+                "tempo_segundos": None,
+            })
             continue
 
-        distancia = sum(
-            min(
-                float(dados["length"])
-                for dados in temporario.get_edge_data(
-                    u, v
-                ).values()
+        distancia_total = 0.0
+        tempo_total = 0.0
+
+        for u, v in zip(caminho, caminho[1:]):
+            dados = min(
+                temporario.get_edge_data(u, v).values(),
+                key=lambda dados: float(dados["length"]),
             )
-            for u, v in zip(caminho, caminho[1:])
-        )
 
-        distancias.append(float(distancia))
+            distancia_total += float(dados["length"])
+            tempo_total += float(dados["travel_time"])
 
-    return distancias
+        resultados.append({
+            "distancia_metros": distancia_total,
+            "tempo_segundos": tempo_total,
+        })
+
+    return resultados

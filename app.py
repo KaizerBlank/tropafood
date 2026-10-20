@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 from utilities.files import criar_entregadores
+from shapely import wkt
 
 import pandas as pd
 from dash import Dash, Input, Output, State, html, dcc, no_update
@@ -14,7 +15,7 @@ from utilities.constants import (
 from src.grafo import obter_malha
 from src.simulador import corrigir_para_ruas, gerar_entregadores_normais
 from src.frota import Frota
-from utilities.interface import plota_mapa_interface
+from utilities.interface import plota_mapa_interface, montar_tabela_rotas
 
 df_bares = pd.read_csv(CSV_BARES).dropna(
     subset=["GEOMETRIA", "LATITUDE", "LONGITUDE"]
@@ -26,6 +27,12 @@ fig = plota_mapa_interface(df_entregadores, df_bares)
 app = Dash()
 
 app.layout = html.Div([
+    dcc.Store(
+        id="dados-entregadores",
+        data=[],
+        storage_type="memory",
+    ),
+
     html.H1(children='TP1 - ALG2', style={'textAlign':'center'}),
     dcc.Dropdown(
         id="busca-restaurante",
@@ -56,11 +63,19 @@ app.layout = html.Div([
     ], style={"display": "flex", "justifyContent": "center", "gap": "8px"}),
     html.P(id="mensagem-geracao", style={"textAlign": "center"}),
     dcc.Graph(id="mapa-entregadores", figure=fig),
+
+    html.H2("Rotas até o restaurante"),
+    html.P("Tempo estimado sem considerar transito ou paradas."),
+    html.Div(
+        "Selecione um restaurante para consultar os entregadores gerados.",
+        id="tabela-rotas",
+        style={"overflowX": "auto"}
+    )
 ])
 
 
 @app.callback(
-    Output("mapa-entregadores", "figure"),
+    Output("dados-entregadores", "data"),
     Output("mensagem-geracao", "children"),
     Input("gerar-entregadores", "n_clicks"),
     State("quantidade-entregadores", "value"),
@@ -96,16 +111,6 @@ def atualizar_mapa(
             for entregador in frota.entregadores
         ]
 
-        figura = plota_mapa_interface(
-            df_entregadores,
-            df_bares,
-            indice_restaurante_selecionado=(
-                int(restaurante_indice)
-                if restaurante_indice is not None
-                else None
-            ),
-        )
-
         mensagem = f"{len(frota.entregadores)} entregadores gerados e indexados na Trie."
         if "salvar" in (salvar_csv or []):
             entregadores_matematico, entregadores_corrigido = salvar_csvs_entregadores(
@@ -115,7 +120,57 @@ def atualizar_mapa(
     except Exception as erro:
         return no_update, f"Não foi possível gerar os entregadores: {erro}"
 
-    return figura, mensagem
+    return df_entregadores.to_dict(orient="records"), mensagem
+
+@app.callback(
+        Output("mapa-entregadores", "figure"),
+        Input("dados-entregadores", "data"),
+        Input("busca-restaurante", "value"),
+)
+def atualizar_visualizacao_mapa(registros, restaurante_indice):
+    return plota_mapa_interface(
+        pd.DataFrame(registros or []),
+        df_bares,
+        indice_restaurante_selecionado=(
+            int(restaurante_indice)
+            if restaurante_indice is not None
+            else None
+        ),
+    )
+
+@app.callback(
+    Output("tabela-rotas", "children"),
+    Input("dados-entregadores", "data"),
+    Input("busca-restaurante", "value"),
+)
+def atualizar_tabela_rotas(registros, restaurante_indice):
+    if restaurante_indice is None:
+        return html.P("Selecione um restaurante para consultar as rotas.")
+
+    if not registros:
+        return html.P("Gere os entregadores antes de consultar as rotas.")
+
+    try:
+        restaurante = df_bares.iloc[int(restaurante_indice)]
+        ponto = wkt.loads(restaurante["GEOMETRIA"])
+
+        grafo = obter_malha()
+        frota = Frota(criar_entregadores(registros))
+        selecionados = frota.entregadores
+
+        resultados = frota.calcular_rotas(
+            grafo,
+            ponto.x,
+            ponto.y,
+            selecionados,
+        )
+
+        return html.Div([
+            html.P(f"Exibindo todos os {len(resultados)} entregadores gerados."),
+            montar_tabela_rotas(resultados),
+        ])
+    except Exception as erro:
+        return html.P(f"Não foi possível consultar as rotas: {erro}")
 
 
 def salvar_csvs_entregadores(df_matematicos, df_corrigidos):
