@@ -52,7 +52,6 @@ class Trie_Compacta:
                 temp_geohash = temp_geohash[index_maior_prefixo:]
 
                 if len(temp_geohash) == 0:
-                    next_node.no_folha = True
                     next_node.entregadores.append(entregador)
                     return next_node
 
