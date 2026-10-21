@@ -34,7 +34,7 @@ def salvar_json(nome, valor):
 
 def salvar_csv(nome, registros):
     with (SAIDA / nome).open('w', encoding='utf-8', newline='') as arquivo:
-        escritor = csv.DictWriter(arquivo, fieldnames=list(registros[0]))
+        escritor = csv.DictWriter(arquivo, fieldnames=list(registros[0]), lineterminator='\n')
         escritor.writeheader()
         escritor.writerows(registros)
 
@@ -93,6 +93,29 @@ def consulta(cliente, registros, geracao, restaurante, raio):
     encontrados = int(re.search(r'^(\d+) de ', resumo).group(1))
     linhas = list(linhas_tabela(tabela))
     assert len(linhas) == encontrados, (resumo, tabela)
+
+    # Referência independente da Trie: conferir o raio sobre toda a frota.
+    # A validação ocorre depois de encerrar a medição dos callbacks.
+    bar = app.df_bares.iloc[restaurante]
+    distancias = great_circle(
+        bar['LATITUDE'], bar['LONGITUDE'],
+        np.array([e['latitude_rua_graus'] for e in registros]),
+        np.array([e['longitude_rua_graus'] for e in registros]),
+    )
+    esperados = {
+        e['id_entregador'] for e, distancia in zip(registros, distancias)
+        if distancia <= raio
+    }
+    ids_tabela = {linha[0] for linha in linhas}
+    pontos = next(t for t in mapa['mapa-entregadores']['figure']['data']
+                  if t.get('name') == 'Entregadores')
+    cores = pontos['marker']['color']
+    assert len(cores) == len(registros)
+    ids_verdes = {
+        e['id_entregador'] for e, cor in zip(registros, cores) if cor == 'green'
+    }
+    assert ids_tabela == esperados, ('Tabela', esperados - ids_tabela, ids_tabela - esperados)
+    assert ids_verdes == esperados, ('Mapa', esperados - ids_verdes, ids_verdes - esperados)
     return {
         'mapa_s': fim_mapa - inicio,
         'tabela_s': fim_tabela - fim_mapa,
@@ -110,6 +133,7 @@ ambiente = {
     'semente_base': SEMENTE,
     'repeticoes_por_consulta': REPETICOES,
     'restaurantes': len(app.df_bares),
+    'validacao': 'IDs da tabela e dos marcadores verdes comparados ao cálculo do raio sobre toda a frota, sem usar a Trie como referência; validação fora da janela de medição.',
     'metodo': 'Dois POSTs em sequência ao servidor Dash por Flask.test_client, com execução real dos callbacks. Tempo inclui serialização local, mapa/resumo e tabela/rotas; exclui geração, indexação inicial, aquecimento, trânsito de rede e renderização no navegador. A tabela inclui a leitura e preparação da malha em cada consulta não vazia, conforme a aplicação.',
 }
 for nome in ['cpu.max', 'memory.max']:

@@ -10,29 +10,29 @@ Os restaurantes consultados foram **NECTAR DA SERRA LTDA**, no bairro Cruzeiro, 
 
 | Caso | Frota | Restaurante | Raio (m) | Selecionados | Sem rota | Mapa e resumo (s) | Tabela e rotas (s) | Total (s) |
 | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| C1 | 1.000 | Néctar da Serra | 1.000 | 7 | 0 | 0,042 | 4,583 | 4,625 |
-| C2 | 5.000 | Néctar da Serra | 1.000 | 34 | 0 | 0,181 | 4,563 | 4,745 |
-| C3 | 5.000 | Néctar da Serra | 2.000 | 171 | 2 | 0,187 | 4,772 | 4,959 |
-| C4 | 5.000 | Donatelo | 2.000 | 176 | 0 | 0,181 | 4,801 | 4,982 |
-| C5 | 5.000 | Néctar da Serra | 100 | 1 | 0 | 0,182 | 4,621 | 4,803 |
+| C1 | 1.000 | Néctar da Serra | 1.000 | 11 | 0 | 0,042 | 4,623 | 4,664 |
+| C2 | 5.000 | Néctar da Serra | 1.000 | 38 | 0 | 0,185 | 4,714 | 4,899 |
+| C3 | 5.000 | Néctar da Serra | 2.000 | 187 | 2 | 0,187 | 4,837 | 5,024 |
+| C4 | 5.000 | Donatelo | 2.000 | 178 | 0 | 0,183 | 4,778 | 4,961 |
+| C5 | 5.000 | Néctar da Serra | 100 | 1 | 0 | 0,201 | 5,326 | 5,527 |
 
-Os intervalos observados para o tempo total foram: C1: 4,577 a 4,713 s; C2: 4,715 a 4,790 s; C3: 4,852 a 5,007 s; C4: 4,961 a 5,040 s; C5: 4,743 a 4,840 s. As repetições de cada cenário retornaram os mesmos IDs, distâncias e tempos estimados.
+Os intervalos observados para o tempo total foram: C1: 4,586 a 4,865 s; C2: 4,823 a 5,001 s; C3: 4,908 a 5,118 s; C4: 4,888 a 5,055 s; C5: 4,827 a 6,177 s. As repetições de cada cenário retornaram os mesmos IDs, distâncias e tempos estimados. Em cada consulta, os IDs da tabela e dos marcadores verdes foram comparados a uma referência que calcula o raio sobre toda a frota, sem utilizar a Trie. Nos cinco cenários, não houve entregadores faltando nem excedentes em relação a essa referência. Essa validação ocorreu fora da janela de medição.
 
-Comparando C1 e C2, o aumento da frota de 1.000 para 5.000 entregadores elevou o número selecionado de 7 para 34, mantendo o restaurante e o raio. Comparando C2 e C3, o aumento do raio de 1 km para 2 km elevou a seleção de 34 para 171 entregadores. C3 e C4 mostram resultados diferentes para dois restaurantes com a mesma frota e o mesmo raio, conforme a distribuição espacial dos entregadores.
+Comparando C1 e C2, o aumento da frota de 1.000 para 5.000 entregadores elevou o número selecionado de 11 para 38, mantendo o restaurante e o raio. Comparando C2 e C3, o aumento do raio de 1 km para 2 km elevou a seleção de 38 para 187 entregadores. C3 e C4 mostram resultados diferentes para dois restaurantes com a mesma frota e o mesmo raio, conforme a distribuição espacial dos entregadores.
 
 A etapa de tabela e rotas concentrou a maior parte do tempo nos cenários medidos. Ela inclui o carregamento da malha e a preparação das velocidades e dos tempos, além do cálculo dos caminhos. Mesmo C5, com apenas um selecionado, apresentou esse custo. Esses resultados descrevem os cenários e o ambiente utilizados; não determinam, por si só, a complexidade assintótica nem o desempenho para qualquer tamanho de frota.
 
-**Raio geográfico e distância pelas ruas.** Em C3, 169 dos 171 selecionados tiveram caminho encontrado; os outros dois foram apresentados como **Sem rota**. Entre os 169 caminhos, 84 ultrapassaram os 2.000 metros do raio. Por exemplo, o `entregador_1662` estava a aproximadamente **1.794,3 metros de distância geográfica** do restaurante, mas seu percurso pelas ruas foi de **2.594,8 metros**, com estimativa de **2 min 48 s**. Ele permaneceu no resultado porque a seleção utiliza o raio geográfico, enquanto a tabela informa o percurso viário. O limite do raio não é reaplicado como limite de comprimento da rota.
+**Raio geográfico e distância pelas ruas.** Em C3, 185 dos 187 selecionados tiveram caminho encontrado; os outros 2 foram apresentados como **Sem rota**. Entre os 185 caminhos, 94 ultrapassaram os 2.000 metros do raio. Por exemplo, o `entregador_1662` estava a aproximadamente **1.794,3 metros de distância geográfica** do restaurante, mas seu percurso pelas ruas foi de **2.594,8 metros**, com estimativa de **2 min 48 s**. Ele permaneceu no resultado porque a seleção utiliza o raio geográfico, enquanto a tabela informa o percurso viário. O limite do raio não é reaplicado como limite de comprimento da rota.
 
-**Registros da interface.** As imagens foram obtidas em uma instância separada da mesma aplicação, com as mesmas sementes de geração. A consulta C1 teve seus sete resultados conferidos; em C3, foram conferidos a contagem de 171 registros, o exemplo acima e os dois casos sem rota. Em C4, os 176 IDs, comprimentos de rota e tempos exibidos foram comparados aos registros do experimento. O ajuste da semente foi feito somente no processo usado para produzir as imagens, sem modificar o código da aplicação.
+**Registros da interface.** As imagens foram obtidas em uma instância separada da mesma aplicação, com as mesmas sementes de geração. Os IDs, comprimentos de rota e tempos exibidos nas consultas C1, C3 e C4 foram comparados aos registros do experimento. O ajuste da semente foi feito somente no processo usado para produzir as imagens, sem modificar o código da aplicação.
 
 ![Consulta C1: 1.000 entregadores e raio geográfico de 1.000 metros](../assets/images/experimentos/consulta_c1.jpg)
 
-Consulta C1 com os sete selecionados e a tabela ordenada pela distância viária.
+Consulta C1 com 11 selecionados e a tabela ordenada pela distância viária.
 
 ![Consulta C3: mapa com 5.000 entregadores e raio geográfico de 2.000 metros](../assets/images/experimentos/consulta_c3_mapa.jpg)
 
-Consulta C3 com o raio geográfico e 171 entregadores selecionados pelos filtros.
+Consulta C3 com o raio geográfico e 187 entregadores selecionados pelos filtros.
 
 ![Consulta C3: tabela rolada até o entregador com percurso de 2.594,8 metros](../assets/images/experimentos/consulta_c3_tabela.jpg)
 
@@ -40,6 +40,6 @@ Detalhe da tabela de C3, rolada até o `entregador_1662`. A coluna de distância
 
 ![Consulta C4: resultados no Bar e Café Donatelo](../assets/images/experimentos/consulta_c4.jpg)
 
-Consulta C4 com 176 selecionados em outra região de Belo Horizonte.
+Consulta C4 com 178 selecionados em outra região de Belo Horizonte.
 
 Os [resultados consolidados](experimentos/saidas/resultados_consultas.csv), os [tempos das 25 medições](experimentos/saidas/tempos_brutos.csv), as frotas e os detalhes por entregador estão em `docs/experimentos/saidas/`. O [script de medição](experimentos/medir.py) e o registro do ambiente acompanham os resultados. Os comprimentos de rota registrados nos detalhes têm a precisão exibida pela tabela, de uma casa decimal.

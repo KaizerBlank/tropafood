@@ -24,5 +24,6 @@
   "semente_base": 20261020,
   "repeticoes_por_consulta": 5,
   "restaurantes": 20859,
+  "validacao": "IDs da tabela e dos marcadores verdes comparados ao cálculo do raio sobre toda a frota, sem usar a Trie como referência; validação fora da janela de medição.",
   "metodo": "Dois POSTs em sequência ao servidor Dash por Flask.test_client, com execução real dos callbacks. Tempo inclui serialização local, mapa/resumo e tabela/rotas; exclui geração, indexação inicial, aquecimento, trânsito de rede e renderização no navegador. A tabela inclui a leitura e preparação da malha em cada consulta não vazia, conforme a aplicação."
 }

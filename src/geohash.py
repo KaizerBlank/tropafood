@@ -55,28 +55,25 @@ def decode_geohash(geohash):
         temp_bin = bin(index)[2:].zfill(5)
         bits_Z.extend(temp_bin)
 
-    numero_intercalacoes = int(len(bits_Z) / 2)
-    
     #Esses são os limites iniciais para latitude e longitude que usamos no encoding
     lat_lower, lat_upper = -90.0, 90.0
     long_lower, long_upper = -180.0, 180.0
-    
-    # Agora fazemos literalmente uma engenharia reversa para encontrar qual a coordenada (longitude e latitude) a partir do valor dos bits
-    for i in range(numero_intercalacoes):
-        long_bit = bits_Z[i * 2]
-        lat_bit = bits_Z[i * 2 + 1]
-        
-        long_mid = (long_upper + long_lower) / 2
-        if long_bit == '1':
-            long_lower = long_mid
+
+    # Longitude ocupa os bits pares; latitude, os ímpares.
+    # Processar um bit por vez preserva o último bit dos prefixos ímpares.
+    for i, bit in enumerate(bits_Z):
+        if i % 2 == 0:
+            long_mid = (long_upper + long_lower) / 2
+            if bit == '1':
+                long_lower = long_mid
+            else:
+                long_upper = long_mid
         else:
-            long_upper = long_mid
-            
-        lat_mid = (lat_upper + lat_lower) / 2
-        if lat_bit == '1':
-            lat_lower = lat_mid
-        else:
-            lat_upper = lat_mid
+            lat_mid = (lat_upper + lat_lower) / 2
+            if bit == '1':
+                lat_lower = lat_mid
+            else:
+                lat_upper = lat_mid
 
     #Aqui nós calculamos o centro geográfico da malha em que estávamos
     lat_centro = (lat_upper + lat_lower) / 2

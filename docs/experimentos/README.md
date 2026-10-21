@@ -15,7 +15,7 @@ docker run --rm --network none \
   tropafood-app python -B /experimento/medir.py
 ```
 
-O comando grava novamente os resultados em `saidas/`. A geração usa a semente `20261020 + N` e desvio padrão de 500 metros. Cada consulta tem uma execução de aquecimento e cinco repetições medidas, com os mesmos entregadores. O script verifica a estabilidade dos resultados e registra separadamente o processamento dos callbacks de mapa/resumo e tabela/rotas.
+O comando grava novamente os resultados em `saidas/`. A geração usa a semente `20261020 + N` e desvio padrão de 500 metros. Cada consulta tem uma execução de aquecimento e cinco repetições medidas, com os mesmos entregadores. O script verifica a estabilidade dos resultados e registra separadamente o processamento dos callbacks de mapa/resumo e tabela/rotas. Depois de encerrar cada medição, compara os IDs da tabela e dos marcadores verdes com o cálculo do raio sobre toda a frota, sem usar a Trie como referência, e interrompe a execução se houver registros faltando ou excedentes.
 
 O total medido corresponde a dois pedidos locais executados em sequência pelo cliente de teste do Flask, incluindo a serialização. Não mede rede, carregamento da cartografia nem renderização no navegador. Os callbacks da interface podem executar em paralelo, de modo que o total sequencial não deve ser apresentado como latência visual da página.
 

@@ -1280,6 +1280,14 @@
     "tempo_exibido": "4 min 29 s"
   },
   {
+    "id_entregador": "entregador_1394",
+    "latitude": -19.83769560442381,
+    "longitude": -43.94386029889051,
+    "distancia_geografica_m": 1944.3518445778395,
+    "distancia_viaria_m": 3048.5,
+    "tempo_exibido": "4 min 09 s"
+  },
+  {
     "id_entregador": "entregador_3001",
     "latitude": -19.833666494361463,
     "longitude": -43.94773261442061,
@@ -1382,6 +1390,14 @@
     "distancia_geografica_m": 1939.2712051569886,
     "distancia_viaria_m": 3330.1,
     "tempo_exibido": "5 min 05 s"
+  },
+  {
+    "id_entregador": "entregador_2688",
+    "latitude": -19.8425497,
+    "longitude": -43.9433268,
+    "distancia_geografica_m": 1901.8302535412502,
+    "distancia_viaria_m": 3337.0,
+    "tempo_exibido": "5 min 23 s"
   },
   {
     "id_entregador": "entregador_2179",
