@@ -5,7 +5,7 @@ from utilities.files import criar_entregadores
 from src.frota import Frota
 import dash_leaflet as dl
 import pandas as pd
-from dash import Dash, Input, Output, State, html, dcc, no_update
+from dash import Dash, Input, Output, State, html, dcc, no_update, ctx  
 from utilities.constants import (
     CSV_BARES,
     CSV_ENTREGADORES_CORRIGIDOS,
@@ -87,15 +87,48 @@ app.layout = html.Main([
             html.Button("Gerar entregadores", id="gerar-entregadores", n_clicks=0),
             html.P(id="mensagem-geracao", role="status", className="mensagem"),
         ], className="geracao"),
-        html.H2("Rotas até o restaurante"),
-        html.P("Tempo estimado sem considerar trânsito ou paradas."),
-        dcc.Loading(html.Div(
-            "Selecione um restaurante para consultar os entregadores gerados.",
-            id="tabela-rotas",
-            style={"overflowX": "auto"},
-        )),
+        html.Button(
+            "Mostrar tabela",
+            id="mostrar-tabela",
+            n_clicks=0,
+        ),
     ], className="painel", **{"aria-label": "Busca e entregadores"}),
+
+    html.Section([
+        html.Div([
+            html.H2("Rotas até o restaurante"),
+            html.Button(
+                "Fechar",
+                id="fechar-tabela",
+                n_clicks=0,
+            ),
+        ], className="cabecalho-tabela"),
+
+        html.P("Tempo estimado sem considerar trânsito ou paradas."),
+
+        dcc.Loading(
+            html.Div(
+                "Selecione um restaurante para consultar os entregadores gerados.",
+                id="tabela-rotas",
+                className="conteudo-tabela",
+            ),
+        ),
+    ],
+        id="painel-tabela",
+        className="painel-tabela",
+        hidden=True,
+        **{"aria-label": "Tabela de rotas dos entregadores"},
+    ),
 ])
+
+@app.callback(
+    Output("painel-tabela", "hidden"),
+    Input("mostrar-tabela", "n_clicks"),
+    Input("fechar-tabela", "n_clicks"),
+    prevent_initial_call=True,
+)
+def controlar_tabela(cliques_mostrar, cliques_fechar):
+    return ctx.triggered_id == "fechar-tabela"
 
 
 @app.callback(

@@ -223,9 +223,19 @@ Os registros da geração são mantidos em um `dcc.Store` em memória no navegad
 
 Os callbacks separam a geração, a atualização do mapa e a consulta das rotas. Essa organização evita que uma mudança de restaurante execute novamente a geração dos entregadores.
 
-A função `montar_tabela_rotas()`, em `utilities/interface.py`, mantém a ordenação fornecida pela Frota. A distância é apresentada em metros, e o tempo é convertido de segundos para minutos somente na exibição. Resultados sem caminho aparecem como **Sem rota**, diferenciando essa situação de um percurso com distância zero.
+O botão **Mostrar tabela** abre os resultados em um painel separado, com mais espaço para leitura das colunas. O botão **Fechar** recolhe esse painel. Essa organização mantém os controles da simulação no painel lateral e permite consultar a tabela sobre o mapa.
 
-## 7. Organização da Frota
+A função `montar_tabela_rotas()`, em `utilities/interface.py`, mantém a ordenação fornecida pela Frota. A distância é apresentada em metros, e o tempo, calculado em segundos, é arredondado para o segundo mais próximo e exibido em minutos e segundos, como `2 min 30 s`. Resultados sem caminho aparecem como **Sem rota**, diferenciando essa situação de um percurso com distância zero.
+
+## 7. Entregadores, restaurantes e organização da Frota
+
+As classes `Entregador` e `Restaurante`, na pasta `entities/`, representam os participantes da simulação. Elas reúnem os dados de cada participante, enquanto a geração das posições, a busca e o cálculo dos percursos ficam nos módulos responsáveis por essas operações.
+
+O `Entregador` possui um identificador, coordenadas geográficas, coordenadas métricas, Geohash e informações sobre sua posição na aresta. O identificador permite associar cada resultado ao entregador correto, mesmo depois da ordenação da tabela. A posição utilizada é a corrigida para as ruas, conforme explicado na seção de restrição viária.
+
+O `Restaurante` possui identificador, nome, endereço e coordenadas. Sua localização serve como centro da distribuição dos entregadores e como referência para as consultas. No cálculo das rotas, suas coordenadas métricas são usadas para localizar o destino na malha viária. Um entregador pode ser consultado em relação a qualquer restaurante, independentemente daquele utilizado na geração de sua posição.
+
+As funções de `utilities/files.py` fazem a conversão dos registros em objetos dessas classes. `ler_bares()` interpreta a geometria do CSV para criar os restaurantes, enquanto `ler_entregadores()` e `criar_entregadores()` criam entregadores a partir do CSV ou dos registros da geração. Na interface, os restaurantes são consultados diretamente na tabela carregada com pandas, e os objetos `Entregador` são criados para trabalhar com a Frota.
 
 A classe `Frota`, em `src/frota.py`, reúne os objetos `Entregador` e sua integração com a Trie compacta. Na construção da Frota, os Geohashes são calculados a partir das coordenadas corrigidas, e os entregadores são inseridos no índice.
 
@@ -242,6 +252,12 @@ Os resultados são retornados em novos registros, sem modificar os objetos origi
 O módulo `src/rotas.py` calcula os percursos utilizando a malha viária. A distância pelas ruas foi escolhida porque a proximidade geográfica não representa necessariamente o deslocamento disponível: um entregador pode precisar contornar um quarteirão ou seguir outro sentido de circulação.
 
 A função `obter_geometria_aresta()` recupera o traçado de uma aresta existente e o orienta de u para v. Quando não há geometria explícita, utiliza um segmento entre esses nós. Esse procedimento representa uma conexão já existente no grafo, sem criar uma rua nova. As curvas dos trechos unidos pela simplificação do OSMnx são preservadas na geometria resultante.
+
+![Conferência da geometria das ruas no QGIS](assets/images/malha_geometria_qgis.png)
+
+Conferência da malha viária no QGIS sobre o mapa do OpenStreetMap. Em azul, uma amostra de arestas com curvas preservadas; em laranja, segmentos entre os nós de arestas sem geometria explícita. A inspeção permite comparar os traçados do grafo com as vias representadas no mapa.
+
+Base cartográfica: © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
 
 A função `calcular_rotas_osmnx()` utiliza a busca de menor caminho do OSMnx com o peso `length`. Como entregadores e restaurantes podem estar no meio das ruas, são adicionados nós e conexões em uma cópia temporária do grafo. Isso permite considerar os trechos parciais de saída e chegada e preservar a malha original. Também é tratado o caso em que origem e destino estão na mesma aresta.
 

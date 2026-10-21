@@ -89,6 +89,11 @@ def montar_tabela_rotas(resultados):
         distancia = resultado["distancia_metros"]
         tempo = resultado["tempo_segundos"]
 
+        tempo_formatado = "Sem rota"
+        if tempo is not None:
+            minutos, segundos = divmod(round(tempo),60)
+            tempo_formatado = f"{minutos} min {segundos:02d} s"
+
         linhas.append(html.Tr([
             html.Td(resultado["id_entregador"]),
             html.Td(f'{resultado["latitude"]:.6f}'),
@@ -98,11 +103,7 @@ def montar_tabela_rotas(resultados):
                 if distancia is None
                 else f"{distancia:.1f}"
             ),
-            html.Td(
-                "Sem rota"
-                if tempo is None
-                else f"{tempo / 60:.2f}"
-            ),
+            html.Td(tempo_formatado),
         ]))
 
     return html.Table([
@@ -111,7 +112,7 @@ def montar_tabela_rotas(resultados):
             html.Th("Latitude"),
             html.Th("Longitude"),
             html.Th("Distância pelas ruas (m)"),
-            html.Th("Tempo estimado (min)"),
+            html.Th("Tempo estimado (min e s)"),
         ])),
         html.Tbody(linhas),
     ], style={
