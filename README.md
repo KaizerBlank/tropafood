@@ -7,7 +7,7 @@ TP1 ALG II
 - Exibe os bares cadastrados em `data/bares.csv`.
 - Permite informar o numero N de entregadores que serao gerados
 - Distribui os N entregadores equitativamente entre os bares com base numa distribuição normal centrada em cada bar. O resto da divisão é distribuído entre alguns bares aleatoriamente.
-- Para nao gerar todos os entregadores no mesmo ponto, gera posições ao redor dos bares usando uma distribuição normal com desvio padrão de 400 metros.
+- Para nao gerar todos os entregadores no mesmo ponto, gera posições ao redor dos bares usando uma distribuição normal com desvio padrão de 500 metros.
 - Ajusta cada posição para algum ponto da aresta (rua) mais proxima usando a malha viária do OpenStreetMap, via OSMnx.
 - Permite salvar os resultados em CSV pela opção **Salvar CSVs desta geração**.
 - Organiza os entregadores em uma Frota integrada à Trie compacta.
@@ -189,7 +189,8 @@ Preservar essas informações permite reutilizar a associação com a rua nas co
 
 A seguir, temos um exemplo da geração com a correção aplicada, onde todos os entregadores são plotados dentro das ruas.
 
-**Pontos em Vermelho: Entregadores**
+**Pontos em Vermelho: Entregadores Corrigidos na Malha Viária**
+
 **Pontos em Azul: Restaurantes**
 
 ![alt text](assets/images/frota_rua.png)
