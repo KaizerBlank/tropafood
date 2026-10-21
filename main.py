@@ -6,4 +6,3 @@ from src.grafo import obter_malha
 grafo = obter_malha()
 print(f"{grafo.number_of_nodes()} nós e" f"{grafo.number_of_edges()} arestas.")
 
-

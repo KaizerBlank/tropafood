@@ -2,6 +2,8 @@ from datetime import datetime
 from uuid import uuid4
 from shapely import wkt
 from utilities.files import criar_entregadores
+from src.geohash import encode_geohash
+from src.trie import Trie_Compacta, buscar_entregadores_restaurante
 from src.frota import Frota
 import dash_leaflet as dl
 import pandas as pd
@@ -165,6 +167,7 @@ def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
         df_entregadores = corrigir_para_ruas(df_entregadores_matematicos, grafo)
         registros = df_entregadores.to_dict(orient="records")
         entregadores = criar_entregadores(registros)
+
         frota = Frota(entregadores)
 
         df_entregadores["geohash"] = [
@@ -205,6 +208,7 @@ def atualizar_tabela_rotas(registros, restaurante_indice, raio):
         selecionados = filtrar_entregadores_por_raio(
             pd.DataFrame(registros), restaurante, raio
         )
+
         quantidade = len(selecionados)
         resumo = html.P(
             f"Exibindo {quantidade} de {len(registros)} entregadores dentro do raio."
@@ -215,10 +219,27 @@ def atualizar_tabela_rotas(registros, restaurante_indice, raio):
         ponto = wkt.loads(restaurante["GEOMETRIA"])
         grafo = obter_malha()
         entregadores = criar_entregadores(selecionados.to_dict(orient="records"))
-        frota = Frota(entregadores)
+
+        ## ================VICTOR=================================
+
+        trie = Trie_Compacta()
+        for entregador in entregadores:
+            entregador.geohash = encode_geohash(
+                entregador.latitude,
+                entregador.longitude
+            )
+            trie.insert(entregador)
+
+        lat_restaurante = restaurante["LATITUDE"]
+        lon_restaurante = restaurante["LONGITUDE"]
+        geohash_restaurante = encode_geohash(lat_restaurante, lon_restaurante)
+        actual_entregadores = buscar_entregadores_restaurante(trie, geohash_restaurante)
+        
+        frota = Frota(actual_entregadores)
         resultados = frota.calcular_rotas(
             grafo, ponto.x, ponto.y, frota.entregadores
         )
+        ## ================================================
 
         return html.Div([resumo, montar_tabela_rotas(resultados)])
     except Exception as erro:
