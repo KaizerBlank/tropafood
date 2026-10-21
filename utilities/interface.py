@@ -32,6 +32,7 @@ def plota_mapa_interface(
     raio_metros=1000,
     exibir_raio=False,
     exibir_restaurantes=False,
+    
 ):
     fig = go.Figure()
 
@@ -137,6 +138,18 @@ def plota_mapa_interface(
         lon_c = df_bares["LONGITUDE"].mean() if not df_bares.empty else -43.94
         centro = dict(lat=lat_c, lon=lon_c)
         zoom = 12
+
+    if len(fig.data) == 0:
+        fig.add_trace(
+            go.Scattermap(
+                lat=[centro["lat"]],
+                lon=[centro["lon"]],
+                mode="markers",
+                marker=dict(size=0, opacity=0),
+                hoverinfo="none",
+                showlegend=False,
+            )
+        )
 
     fig.update_layout(
         map=dict(
