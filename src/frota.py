@@ -1,22 +1,17 @@
-from src.geohash import encode_geohash
+from src.geohash import encode_geohash, vizinhos_adjacentes
 from src.trie import Trie_Compacta
 from src.rotas import localizar_na_via, calcular_rotas_osmnx
 
 class Frota:
     def __init__(self, entregadores):
         self.entregadores = list(entregadores)
-        self.trie = Trie_Compacta()
 
-        for entregador in self.entregadores:
-            entregador.geohash = encode_geohash(
-                entregador.latitude,
-                entregador.longitude
-            )
 
-            self.trie.insert(entregador)
+    # def buscar_por_prefixo(self, prefixo):
+    #     lista_geohashes_busca = []
+    #     lista_geohashes_busca.append(prefixo)
 
-    def buscar_por_prefixo(self, prefixo):
-        return self.trie.search(prefixo)
+    #     return self.trie.search(prefixo)
 
     def _localizar_entregador(self, grafo, entregador):
         aresta = (

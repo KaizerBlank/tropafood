@@ -1,5 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
+from src.geohash import encode_geohash
+from src.trie import Trie_Compacta, buscar_entregadores_restaurante
 
 import pandas as pd
 from dash import Dash, Input, Output, State, ctx, dcc, html, no_update
@@ -267,6 +269,23 @@ def atualizar_tabela_rotas(registros, restaurante_indice, raio):
         grafo = obter_malha()
         entregadores = criar_entregadores(
             selecionados.to_dict(orient="records")
+
+        # ## ================VICTOR=================================
+
+        # trie = Trie_Compacta()
+        # for entregador in entregadores:
+        #     entregador.geohash = encode_geohash(
+        #         entregador.latitude,
+        #         entregador.longitude
+        #     )
+        #     trie.insert(entregador)
+
+        # lat_restaurante = restaurante["LATITUDE"]
+        # lon_restaurante = restaurante["LONGITUDE"]
+        # geohash_restaurante = encode_geohash(lat_restaurante, lon_restaurante)
+        # actual_entregadores = buscar_entregadores_restaurante(trie, geohash_restaurante)
+        
+        # ## ================================================    
         )
         frota = Frota(entregadores)
         resultados = frota.calcular_rotas(

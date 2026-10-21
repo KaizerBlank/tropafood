@@ -1,4 +1,4 @@
-# implementar aqui a trie compacta
+from src.geohash import vizinhos_adjacentes
 
 # Devo colocar bool indicando fim e lista com informações dos entregadores associado a determinado geohash?
 class TrieNode:
@@ -125,4 +125,18 @@ class Trie_Compacta:
 
         return total_entregadores
     
+
+def buscar_entregadores_restaurante(trie: Trie_Compacta, geohash_restaurante):
+    actual_entregadores = {}
+
+    geohash_bairro = geohash_restaurante[:6]
+    lista_geohashes = vizinhos_adjacentes(geohash_bairro)
+    lista_geohashes.append(geohash_bairro)
+
+    for geohash in lista_geohashes:
+        temp_entregadores = trie.search(geohash)
+        for entregador in temp_entregadores:
+            actual_entregadores[entregador.id] = entregador
+
+    return list(actual_entregadores.values())
 
