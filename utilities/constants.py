@@ -3,7 +3,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
 
-CSV_BARES = DATA_DIR / "100_bares.csv"
+CSV_BARES = DATA_DIR / "bares.csv"
 CSV_ENTREGADORES_MATEMATICOS = DATA_DIR / "entregadores_matematicos.csv"
 CSV_ENTREGADORES_CORRIGIDOS = DATA_DIR / "entregadores_corrigidos.csv"
 

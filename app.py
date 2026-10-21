@@ -24,9 +24,10 @@ from utilities.interface import (
 df_bares = pd.read_csv(CSV_BARES).dropna(
     subset=["GEOMETRIA", "LATITUDE", "LONGITUDE"]
 ).reset_index(drop=True)
-CENTRO_INICIAL = (
-    [df_bares["LATITUDE"].mean(), df_bares["LONGITUDE"].mean()]
-)
+CENTRO_INICIAL = [df_bares["LATITUDE"].mean(), df_bares["LONGITUDE"].mean()]
+
+def raio_valido(raio):
+    return raio is not None and 100 <= raio <= 50000
 
 app = Dash()
 app.title = "Tropafood"
@@ -108,8 +109,9 @@ app.layout = html.Main([
     Input("exibir-restaurantes", "value"),
 )
 def atualizar_busca(entregadores, restaurante_indice, raio, exibir_raio, exibir_restaurantes):
-    if raio is None or not 100 <= raio <= 50000:
+    if not raio_valido(raio):
         return no_update, "Raio não aceito. Use de 100 a 50.000 metros."
+    
     camadas = plota_mapa_interface(
         pd.DataFrame(entregadores), df_bares,
         indice_restaurante_selecionado=restaurante_indice,
@@ -117,16 +119,14 @@ def atualizar_busca(entregadores, restaurante_indice, raio, exibir_raio, exibir_
         exibir_raio="exibir" in (exibir_raio or []),
         exibir_restaurantes="exibir" in (exibir_restaurantes or []),
     )
+    
     quantidade = len(entregadores or [])
     if restaurante_indice is None:
-        resumo = f"{quantidade} entregadores no mapa."
-    else:
-        restaurante = df_bares.iloc[int(restaurante_indice)]
-        selecionados = filtrar_entregadores_por_raio(
-            pd.DataFrame(entregadores or []), restaurante, raio
-        )
-        resumo = f"{len(selecionados)} de {quantidade} entregadores dentro do raio."
-    return camadas, resumo
+        return camadas, f"{quantidade} entregadores no mapa."
+        
+    restaurante = df_bares.iloc[int(restaurante_indice)]
+    selecionados = filtrar_entregadores_por_raio(pd.DataFrame(entregadores or []), restaurante, raio)
+    return camadas, f"{len(selecionados)} de {quantidade} entregadores dentro do raio."
 
 
 @app.callback(
@@ -152,7 +152,7 @@ def centralizar_restaurante(restaurante_indice):
     running=[(Output("gerar-entregadores", "disabled"), True, False)],
 )
 def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
-    if quantidade_entregadores is None or quantidade_entregadores < 1 or not float(quantidade_entregadores).is_integer():
+    if not quantidade_entregadores or quantidade_entregadores < 1 or not float(quantidade_entregadores).is_integer():
         return no_update, "Quantidade não aceita. Use um inteiro maior que zero."
 
     try:
@@ -173,11 +173,11 @@ def atualizar_mapa(n_clicks, quantidade_entregadores, salvar_csv=None):
         ]
 
         mensagem = f"{len(frota.entregadores)} entregadores gerados e indexados na Trie."
-        if "salvar" in (salvar_csv or []):
-            entregadores_matematico, entregadores_corrigido = salvar_csvs_entregadores(
-                df_entregadores_matematicos, df_entregadores
-            )
-            mensagem += f" CSVs salvos: {entregadores_matematico.name} e {entregadores_corrigido.name}."
+        
+        if salvar_csv and "salvar" in salvar_csv:
+            mat_path, corr_path = salvar_csvs_entregadores(df_entregadores_matematicos, df_entregadores)
+            mensagem += f" CSVs salvos: {mat_path.name} e {corr_path.name}."
+            
     except Exception:
         return no_update, "Não foi possível gerar os entregadores."
 
@@ -194,7 +194,7 @@ def atualizar_tabela_rotas(registros, restaurante_indice, raio):
     if restaurante_indice is None:
         return html.P("Selecione um restaurante para consultar as rotas.")
 
-    if raio is None or not 100 <= raio <= 50000:
+    if not raio_valido(raio):
         return html.P("Raio não aceito. Use de 100 a 50.000 metros.")
 
     if not registros:
@@ -202,13 +202,9 @@ def atualizar_tabela_rotas(registros, restaurante_indice, raio):
 
     try:
         restaurante = df_bares.iloc[int(restaurante_indice)]
-        selecionados = filtrar_entregadores_por_raio(
-            pd.DataFrame(registros), restaurante, raio
-        )
-        quantidade = len(selecionados)
-        resumo = html.P(
-            f"Exibindo {quantidade} de {len(registros)} entregadores dentro do raio."
-        )
+        selecionados = filtrar_entregadores_por_raio(pd.DataFrame(registros), restaurante, raio)
+        resumo = html.P(f"Exibindo {len(selecionados)} de {len(registros)} entregadores dentro do raio.")
+        
         if selecionados.empty:
             return html.Div([resumo, montar_tabela_rotas([])])
 

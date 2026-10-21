@@ -198,16 +198,47 @@ O simulador, além de utilizado na interface, pode ser executado pelo terminal. 
 
 Em `utilities/files.py`, a geometria dos restaurantes é interpretada para preencher suas coordenadas x e y. Os entregadores são criados com as coordenadas corrigidas e os metadados da aresta, preservando essas informações desde a leitura dos dados até o cálculo das rotas.
 
+### 4.3 Benchmark Simulador
+
+O benchmark (`scripts/benchmark_frota.py`) mede separadamente a geração e a correção para ruas com 1.000, 10.000, 100.000 e 1.000.000 de entregadores. Usa os bares de `data/bares.csv` e executa cada tamanho cinco vezes. Os testes foram executados em uma máquina com i7 13th, 32ram, 512ssd e windows 11:
+
+#### 4.3.1 Análise assintótica
+
+**Geração dos Entregadores:**
+
+Para M restaurantes e N entregadores, a geração percorre os restaurantes e cria N registros, resultando em tempo O(M + N) e memória O(M + N). Com a base fixa, seu custo é O(N).
+
+**Correção para a Malha Viária:**
+
+Na correção, cada entregador é consultado na malha e projetado na rua mais próxima. Para uma malha fixa, podemos afirmar um possível crescimento linear O(N).
+
+#### 4.3.2 Análise empírica
+
+A leitura do CSV de bares e o carregamento da malha são feitos antes da medição. A geração inclui a conversão das coordenadas de metros para graus e a correção inclui a busca da aresta mais próxima, a projeção na rua e a conversão das coordenadas.
+As médias são gravadas em `data/benchmark_frota.csv`.
+
+Segue abaixo os tempos obtidos ao executar o benchmark na máquina citada anteriormente:
+
+| Entregadores | Geração | Correção para ruas |
+| ---: | ---: | ---: |
+| 1.000 | 0,729 | 0,923 |
+| 10.000 | 0,766 | 1,545 |
+| 100.000 | 1,176 | 8,103 |
+| 1.000.000 | 5,394 | 72,169 |
+
+Ao aumentar a frota de 1.000 para 1.000.000 de entregadores (1.000 vezes), o
+tempo medido aumentou cerca de 7,4 vezes na geração e 78 vezes na correção.
+O crescimento observado foi sublinear nessa faixa de teste, mas isso não
+determina a complexidade assintótica: custos fixos e características do ambiente
+influenciam os tempos medidos.
+
 ## 5. Interface do mapa
 
-O módulo `utilities/interface.py` prepara os dados para o gráfico Plotly. Os pontos são exibidos da seguinte forma
+O mapa da aplicação é construído com Dash Leaflet e usa o OpenStreetMap como camada de fundo. Os entregadores são representados por marcadores circulares posicionados nas coordenadas corrigidas para as ruas; ao passar o cursor sobre um marcador, é exibido o ID do entregador.
 
-- Bares: Azul;
-- Bar Selecionado: Verde;
-- Entregadores Filtrados: Vermelho;
-- Entregadores não-Filtrados: Cinza;
+É possível buscar um restaurante pelo nome e definir um raio de busca em metros. O valor deve ser maior que zero; caso contrário, a interface informa que o raio é inválido. Ao selecionar um restaurante, o mapa o destaca com um marcador e centraliza a visualização nele. Os entregadores dentro do raio ficam verdes, enquanto os que estão fora permanecem vermelhos. O resumo informa quantos entregadores estão dentro do raio em relação ao total exibido. A opção **Exibir raio de busca** desenha a área circular configurada no mapa.
 
-# ADICONAR AQUI FOTO POS FILTRAGEM CIRCULANDO OS PONTOS
+A opção **Exibir todos os restaurantes** adiciona ao mapa os demais restaurantes. Sem um restaurante selecionado, os entregadores aparecem em vermelho. Na abertura da aplicação, os entregadores ainda não são exibidos; eles aparecem após a geração de uma frota.
 
 ## 6. Aplicação web
 

@@ -3,17 +3,6 @@ from dash import html
 import dash_leaflet as dl
 from osmnx.distance import great_circle
 
-def carrega_entregadores_corrigidos():
-    try:
-        df_entregadores = pd.read_csv("data/entregadores_corrigidos.csv")
-        df_bares = pd.read_csv("data/bares.csv").dropna(subset=["LATITUDE", "LONGITUDE"])
-    except Exception as e:
-        print(f"Erro ao carregar dados: {e}")
-        df_entregadores = pd.DataFrame()
-        df_bares = pd.DataFrame()
-
-    return df_entregadores, df_bares
-
 def filtrar_entregadores_por_raio(df_entregadores, restaurante, raio_metros):
     if df_entregadores.empty:
         return df_entregadores
@@ -33,24 +22,26 @@ def plota_mapa_interface(
     if indice_restaurante_selecionado is not None:
         restaurante = df_bares.iloc[int(indice_restaurante_selecionado)]
 
-    df_entregadores = df_entregadores.assign(dentro_raio=False)
     if restaurante is not None:
-        entregadores_no_raio = filtrar_entregadores_por_raio(
-            df_entregadores, restaurante, raio_metros
+        entregadores_no_raio = filtrar_entregadores_por_raio(df_entregadores, restaurante, raio_metros)
+        dentro = df_entregadores.index.isin(entregadores_no_raio.index)
+        df_entregadores = df_entregadores.assign(
+            cor="green" if len(dentro) > 0 else "#dc3545", # fallback
+            opacidade=0.8
         )
-        df_entregadores["dentro_raio"] = df_entregadores.index.isin(entregadores_no_raio.index)
+        df_entregadores["cor"] = "green"
+        df_entregadores["cor"] = df_entregadores["cor"].where(dentro, "#dc3545")
+        df_entregadores["opacidade"] = 0.8
+        df_entregadores["opacidade"] = df_entregadores["opacidade"].where(dentro, 0.75)
+    else:
+        df_entregadores = df_entregadores.assign(cor="red", opacidade=0.8)
 
     marcadores = []
     for entregador in df_entregadores.to_dict("records"):
-        cor = "red"
-        opacidade = 0.8
-        if restaurante is not None:
-            cor = "green" if entregador["dentro_raio"] else "#dc3545"
-            opacidade = 0.8 if entregador["dentro_raio"] else 0.75
         marcador = dl.CircleMarker(
             center=[entregador["latitude_rua_graus"], entregador["longitude_rua_graus"]],
-            radius=7, color=cor, fillColor=cor, weight=1,
-            opacity=opacidade, fillOpacity=opacidade,
+            radius=7, color=entregador["cor"], fillColor=entregador["cor"], weight=1,
+            opacity=entregador["opacidade"], fillOpacity=entregador["opacidade"],
             children=dl.Tooltip(str(entregador["id_entregador"])),
         )
         marcadores.append(marcador)
@@ -76,6 +67,7 @@ def plota_mapa_interface(
             position=centro,
             children=dl.Tooltip(str(restaurante.get("NOME", "Restaurante"))),
         ))
+        
     return marcadores
 
 
