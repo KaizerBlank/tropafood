@@ -3,8 +3,30 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import html
 from osmnx.distance import great_circle
+from src.geohash import encode_geohash
+from src.trie import buscar_entregadores_restaurante
 
-def filtrar_entregadores_por_raio(df_entregadores, restaurante, raio_metros):
+def filtrar_entregadores_por_raio(df_entregadores, restaurante, raio_metros, trie):
+    if df_entregadores.empty:
+        return df_entregadores
+
+    geohash_restaurante = encode_geohash(
+        restaurante["LATITUDE"], restaurante["LONGITUDE"]
+    )
+
+    candidatos_trie = buscar_entregadores_restaurante(
+        trie, geohash_restaurante
+    )
+
+    ids_candidatos = {
+        entregador.id_Entregador
+        for entregador in candidatos_trie
+    }
+
+    df_entregadores = df_entregadores.loc[
+        df_entregadores["id_entregador"].isin(ids_candidatos)
+    ]
+
     if df_entregadores.empty:
         return df_entregadores
 
@@ -32,7 +54,7 @@ def plota_mapa_interface(
     raio_metros=1000,
     exibir_raio=False,
     exibir_restaurantes=False,
-    
+    trie=None,
 ):
     fig = go.Figure()
 
@@ -47,7 +69,7 @@ def plota_mapa_interface(
     if not df_entregadores.empty:
         if restaurante is not None:
             no_raio = filtrar_entregadores_por_raio(
-                df_entregadores, restaurante, raio_metros
+                df_entregadores, restaurante, raio_metros, trie
             )
             cores = np.where(
                 df_entregadores.index.isin(no_raio.index), "green", "red"

@@ -129,14 +129,14 @@ class Trie_Compacta:
 def buscar_entregadores_restaurante(trie: Trie_Compacta, geohash_restaurante):
     actual_entregadores = {}
 
-    geohash_bairro = geohash_restaurante[:6]
+    geohash_bairro = geohash_restaurante[:5]
     lista_geohashes = vizinhos_adjacentes(geohash_bairro)
     lista_geohashes.append(geohash_bairro)
 
     for geohash in lista_geohashes:
         temp_entregadores = trie.search(geohash)
         for entregador in temp_entregadores:
-            actual_entregadores[entregador.id] = entregador
+            actual_entregadores[entregador.id_Entregador] = entregador
 
     return list(actual_entregadores.values())
 

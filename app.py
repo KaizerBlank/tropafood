@@ -1,7 +1,5 @@
 from datetime import datetime
 from uuid import uuid4
-from src.geohash import encode_geohash
-from src.trie import Trie_Compacta, buscar_entregadores_restaurante
 
 import pandas as pd
 from dash import Dash, Input, Output, State, ctx, dcc, html, no_update
@@ -17,6 +15,7 @@ from utilities.constants import (
     DESVIO_PADRAO_METROS,
 )
 from utilities.files import criar_entregadores
+from utilities.indice import obter_trie_entregadores
 from utilities.interface import (
     filtrar_entregadores_por_raio,
     montar_tabela_rotas,
@@ -34,6 +33,7 @@ app.title = "Tropafood"
 
 app.layout = html.Main([
     dcc.Store(id="dados-entregadores", data=[]),
+    dcc.Store(id="geracao-entregadores", data=None),
     dcc.Graph(
         id="mapa-entregadores",
         figure=plota_mapa_interface(pd.DataFrame(), df_bares),
@@ -176,14 +176,19 @@ def controlar_tabela(cliques_mostrar, cliques_fechar):
     Input("raio-busca", "value"),
     Input("exibir-raio", "value"),
     Input("exibir-restaurantes", "value"),
+    Input("geracao-entregadores", "data"),
 )
 def atualizar_busca(
-    entregadores, restaurante_indice, raio, exibir_raio, exibir_restaurantes
+    entregadores, restaurante_indice, raio, exibir_raio, exibir_restaurantes, geracao
 ):
     if raio is None or not 100 <= raio <= 50000:
         return no_update, "Raio não aceito. Use de 100 a 50.000 metros."
 
     df_entregadores = pd.DataFrame(entregadores or [])
+    trie = (
+        obter_trie_entregadores(geracao, entregadores)
+        if entregadores else None
+    )
 
     figura = plota_mapa_interface(
         df_entregadores,
@@ -192,6 +197,7 @@ def atualizar_busca(
         raio_metros=raio,
         exibir_raio="exibir" in (exibir_raio or []),
         exibir_restaurantes="exibir" in (exibir_restaurantes or []),
+        trie=trie,
     )
 
     total = len(df_entregadores)
@@ -200,13 +206,14 @@ def atualizar_busca(
 
     restaurante = df_bares.iloc[int(restaurante_indice)]
     selecionados = filtrar_entregadores_por_raio(
-        df_entregadores, restaurante, raio
+        df_entregadores, restaurante, raio, trie
     )
     return figura, f"{len(selecionados)} de {total} entregadores dentro do raio."
 
 @app.callback(
     Output("dados-entregadores", "data"),
     Output("mensagem-geracao", "children"),
+    Output("geracao-entregadores", "data"),
     Input("gerar-entregadores", "n_clicks"),
     State("quantidade-entregadores", "value"),
     State("salvar-csv", "value"),
@@ -215,7 +222,7 @@ def atualizar_busca(
 )
 def atualizar_mapa(n_clicks, quantidade, salvar_csv):
     if quantidade is None or quantidade < 1 or not float(quantidade).is_integer():
-        return no_update, "Quantidade não aceita. Use um inteiro maior que zero."
+        return no_update, "Quantidade não aceita. Use um inteiro maior que zero.", no_update
 
     try:
         df_mat = gerar_entregadores_normais(
@@ -232,18 +239,22 @@ def atualizar_mapa(n_clicks, quantidade, salvar_csv):
             f_mat, f_corr = salvar_csvs_entregadores(df_mat, df_corr)
             msg += f" Salvo em: {f_mat.name} e {f_corr.name}."
 
-        return df_corr.to_dict("records"), msg
+        registros = df_corr.to_dict("records")
+        geracao = uuid4().hex
+        obter_trie_entregadores(geracao, registros)
+        return registros, msg, geracao
 
     except Exception as erro:
-        return no_update, f"Erro ao gerar entregadores: {erro}"
+        return no_update, f"Erro ao gerar entregadores: {erro}", no_update
 
 @app.callback(
     Output("tabela-rotas", "children"),
     Input("dados-entregadores", "data"),
     Input("busca-restaurante", "value"),
     Input("raio-busca", "value"),
+    Input("geracao-entregadores", "data"),
 )
-def atualizar_tabela_rotas(registros, restaurante_indice, raio):
+def atualizar_tabela_rotas(registros, restaurante_indice, raio, geracao):
     if restaurante_indice is None:
         return html.P("Selecione um restaurante para consultar as rotas.")
 
@@ -255,8 +266,9 @@ def atualizar_tabela_rotas(registros, restaurante_indice, raio):
 
     try:
         restaurante = df_bares.iloc[int(restaurante_indice)]
+        trie = obter_trie_entregadores(geracao, registros)
         selecionados = filtrar_entregadores_por_raio(
-            pd.DataFrame(registros), restaurante, raio
+            pd.DataFrame(registros), restaurante, raio, trie
         )
         resumo = html.P(
             f"Exibindo {len(selecionados)} de {len(registros)} entregadores dentro do raio."
@@ -269,23 +281,6 @@ def atualizar_tabela_rotas(registros, restaurante_indice, raio):
         grafo = obter_malha()
         entregadores = criar_entregadores(
             selecionados.to_dict(orient="records")
-
-        # ## ================VICTOR=================================
-
-        # trie = Trie_Compacta()
-        # for entregador in entregadores:
-        #     entregador.geohash = encode_geohash(
-        #         entregador.latitude,
-        #         entregador.longitude
-        #     )
-        #     trie.insert(entregador)
-
-        # lat_restaurante = restaurante["LATITUDE"]
-        # lon_restaurante = restaurante["LONGITUDE"]
-        # geohash_restaurante = encode_geohash(lat_restaurante, lon_restaurante)
-        # actual_entregadores = buscar_entregadores_restaurante(trie, geohash_restaurante)
-        
-        # ## ================================================    
         )
         frota = Frota(entregadores)
         resultados = frota.calcular_rotas(

@@ -10,7 +10,7 @@ TP1 ALG II
 - Para nao gerar todos os entregadores no mesmo ponto, gera posições ao redor dos bares usando uma distribuição normal com desvio padrão de 500 metros.
 - Ajusta cada posição para algum ponto da aresta (rua) mais proxima usando a malha viária do OpenStreetMap, via OSMnx.
 - Permite salvar os resultados em CSV pela opção **Salvar CSVs desta geração**.
-- Organiza os entregadores em uma Frota integrada à Trie compacta.
+- Indexa os entregadores em uma Trie compacta e utiliza a Frota para organizar os resultados das rotas.
 - Calcula a distância pelas ruas até o restaurante selecionado.
 - Estima o tempo utilizando a velocidade de cada trecho do percurso.
 - Apresenta os resultados em uma tabela ordenada pela distância viária.
@@ -73,7 +73,7 @@ O script `scripts/geocodificador.py` busca coordenadas para os endereços de `da
 
 ## Configurações
 
-`utilities/constants.py` centraliza os caminhos, o desvio padrão e os sistemas de coordenadas usados pelo app e pelo simulador. O arquivo de entrada padrão é `data/bares.csv`, e o desvio padrão é 400 metros.
+`utilities/constants.py` centraliza os caminhos, o desvio padrão e os sistemas de coordenadas utilizados pelo app e pelo simulador. O arquivo de entrada padrão é `data/bares.csv`, e o desvio padrão da geração é de 500 metros.
 
 ## Estrutura do projeto
 
@@ -82,20 +82,24 @@ tropafood/
 ├── app.py                       # Interface interativa em Dash
 ├── assets/style.css             # Estilos da interface
 ├── data/                        # Bases, resultados e cache local do grafo
-├── docs/tp1.pdf                 # Enunciado do trabalho
+├── docs/
+│   ├── tp1.pdf                  # Enunciado do trabalho
+│   ├── analise_experimental.md  # Análise das consultas
+│   └── experimentos/            # Medições e reprodução dos experimentos
 ├── entities/                    # Entidades de restaurantes e entregadores
 ├── scripts/geocodificador.py    # Geocodificação de endereços
 ├── src/
 │   ├── grafo.py                 # Carregamento ou geração da malha viária
 │   ├── simulador.py             # Geração e ajuste das posições
 │   ├── geohash.py               # Estrutura de geohash
-│   └── trie.py                  # Estrutura Trie
+│   ├── trie.py                  # Estrutura Trie
 │   ├── frota.py                 # Organização dos entregadores e resultados
-│   ├── rotas.py                 # Cálculo de distância e tempo pelas ruas
+│   └── rotas.py                 # Cálculo de distância e tempo pelas ruas
 ├── utilities/
 │   ├── constants.py             # Configurações compartilhadas
-│   ├── files.py                 # Leitura de dados
-│   └── interface.py             # Preparação do mapa
+│   ├── files.py                 # Leitura de dados e criação das entidades
+│   ├── indice.py                # Construção e reutilização das Tries por geração
+│   └── interface.py             # Filtros, mapa e tabela de resultados
 ├── dockerfile              
 ├── main.py                  
 └── requirements.txt
@@ -104,6 +108,10 @@ tropafood/
 # Documentação Detalhada
 
 ## 1. Introdução
+
+O Tropafood é uma aplicação interativa para simular a localização de entregadores e consultar sua proximidade em relação a restaurantes de Belo Horizonte. As posições são geradas ao redor dos restaurantes e corrigidas para ruas transitáveis. A consulta combina a indexação espacial por Geohash e Trie compacta, a filtragem por raio geográfico e o cálculo de percursos pela malha viária. Os resultados são apresentados no mapa e em uma tabela ordenada pela distância pelas ruas, acompanhada da estimativa de tempo de chegada.
+
+A base de restaurantes utilizada é `data/bares.csv`, com 20.859 registros provenientes da publicação de setembro de 2026 do conjunto [Atividade Econômica da Prefeitura de Belo Horizonte](https://dados.pbh.gov.br/pt_BR/dataset/atividade-economica). A preparação no QGIS acrescentou os campos `LATITUDE` e `LONGITUDE`, preservando os atributos e a geometria originais. Assim, os dados de identificação e as representações espaciais permanecem associados na mesma tabela. As unidades e os sistemas de coordenadas utilizados são descritos na seção do simulador.
 
 ## 2. Indexação Geohash
 
@@ -176,9 +184,9 @@ A função `gerar_entregadores_normais` é responsável pela geração da posiç
 
 - lê a geometria de cada bar e usa suas coordenadas $x$, $y$, projetadas em metros como centro da distribuição normal.
 - A quantidade solicitada é dividida entre os bares: todos recebem a mesma inteira quantidade $E$, obtida através de $\lfloor N/M \rfloor$, e o resto R, caso a divisão não seja inteira, é distribuído aleatoriamente entre alguns bares.
-- Para cada posição, são geradas coordenadas $x$ e $y$ com o desvio padrão configurado, que por padrão é 400 metros, a fim de não serem gerados varios entregadores no mesmo ponto.
+- Para cada entregador, as coordenadas x e y são sorteadas independentemente por distribuições normais centradas no restaurante, com o desvio padrão configurado, de 500 metros por eixo na configuração utilizada.
 
-Cada entregador recebe um id, o nome do bar de origem, as coordenadas matemáticas em metros ('EPSG:31983') e sua conversão para latitude e longitude ('EPSG:4326').
+Cada entregador recebe um ID, o nome do bar de origem, as coordenadas matemáticas em metros (`EPSG:31983`) e sua conversão para latitude e longitude (`EPSG:4326`).
 
 Como o exemplo a seguir mostra, essa geração ainda não é a ideal, uma vez que nem todos os pontos gerados respeitam a malha viária, como no exemplo a seguir, os pontos circulados foram plotados fora das ruas da malha, inclusive dentro do Parque Municipal Américo Renné.
 
@@ -187,7 +195,7 @@ Como o exemplo a seguir mostra, essa geração ainda não é a ideal, uma vez qu
 
 ![alt text](assets/images/frota_mat.png)
 
-A geração utiliza coordenadas projetadas em `EPSG:31983`, cuja unidade é o metro. Essa escolha permite configurar o desvio padrão diretamente como uma distância, tornando mais claro o significado dos 400 metros utilizados na distribuição.
+O desvio padrão controla a dispersão das posições ao redor dos restaurantes. Os 500 metros são uma medida dessa dispersão por eixo e não representam uma distância máxima para a geração.
 
 Latitude e longitude são mantidas em `EPSG:4326`, em graus, para a exibição no mapa e a codificação Geohash. Dessa forma, cada representação atende a uma finalidade: coordenadas métricas para geração e operações sobre as ruas, e coordenadas geográficas para apresentação e indexação.
 
@@ -238,7 +246,7 @@ As médias são gravadas em `data/benchmark_frota.csv`.
 
 Segue abaixo os tempos obtidos ao executar o benchmark na máquina citada anteriormente:
 
-| Entregadores | Geração | Correção para ruas |
+| Entregadores | Geração (s) | Correção para ruas (s) |
 | -----------: | --------: | -------------------: |
 |        1.000 |     0,729 |                0,923 |
 |       10.000 |     0,766 |                1,545 |
@@ -255,11 +263,11 @@ influenciam os tempos medidos.
 
 O mapa da aplicação é construído com Dash e Plotly, utilizando traços `Scattermap` para exibir os pontos sobre a cartografia de fundo. Os entregadores são representados por marcadores circulares posicionados nas coordenadas corrigidas para as ruas; ao passar o cursor sobre um marcador, são exibidos o ID, a latitude e a longitude do entregador.
 
-É possível buscar um restaurante pelo nome e definir um raio de busca em metros. O valor deve estar entre 100 e 50.000 metros; caso contrário, a interface informa que o raio é inválido. Ao selecionar um restaurante, o mapa o destaca com um marcador e centraliza a visualização nele. Os entregadores dentro do raio ficam verdes, enquanto os que estão fora permanecem vermelhos. O resumo informa quantos entregadores estão dentro do raio em relação ao total exibido. A opção **Exibir raio de busca** desenha a área circular configurada no mapa.
+É possível buscar um restaurante pelo nome e definir um raio de busca em metros. O valor deve estar entre 100 e 50.000 metros; caso contrário, a interface informa que o raio é inválido. Ao selecionar um restaurante, o mapa o destaca com um marcador e centraliza a visualização nele. Os entregadores selecionados pela busca e pelo filtro de raio ficam verdes, enquanto os descartados permanecem vermelhos. O resumo informa quantos entregadores estão dentro do raio em relação ao total exibido. A opção **Exibir raio de busca** desenha a área circular configurada no mapa.
 
 ![alt text](assets/images/filtrados.png)
 
-A opção **Exibir todos os restaurantes** adiciona ao mapa os demais restaurantes. Sem um restaurante selecionado, os entregadores aparecem em vermelho. Na abertura da aplicação, os entregadores ainda não são exibidos; eles aparecem após a geração de uma frota.
+A opção **Exibir todos os restaurantes** adiciona ao mapa os demais restaurantes. Sem um restaurante selecionado, os entregadores aparecem em vermelho. O mapa é exibido desde a abertura da aplicação. Os entregadores aparecem após a geração de uma frota.
 
 **Apenas Entregadores**
 ![alt text](assets/images/entregadores.png)
@@ -273,7 +281,9 @@ A aplicação roda em Dash através do `app.py`. Nela, o usuário informa a quan
 
 Há uma opção de salvar a geração em CSV (posições originais e corrigidas), salvando os arquivos com data e hora para não sobrescrever dados antigos. 
 
-Ao escolher um restaurante, a aplicação lista em uma tabela os entregadores dentro do raio, mostrando a distância em metros e o tempo estimado de rota.
+Ao escolher um restaurante, a aplicação consulta a Trie para recuperar candidatos e depois aplica o raio de busca pela distância geográfica, calculada com `great_circle`, do OSMnx, a partir das coordenadas de latitude e longitude. Somente os entregadores selecionados seguem para o cálculo das rotas.
+
+O raio define a proximidade geográfica em relação ao restaurante. A distância apresentada na tabela corresponde ao percurso pelas ruas, respeitando as conexões e os sentidos disponíveis na malha. Por isso, com um raio de 2.000 metros, um entregador pode ser selecionado e apresentar um percurso viário superior a 2.000 metros. Não é aplicado um segundo filtro para limitar o comprimento da rota ao valor do raio. A tabela ordena os selecionados pela distância viária e apresenta o tempo estimado desse mesmo percurso.
 
 O botão **Mostrar tabela** abre os resultados em um painel separado, com mais espaço para leitura das colunas. O botão **Fechar** recolhe esse painel. Essa organização mantém os controles da simulação no painel lateral e permite consultar a tabela sobre o mapa.
 
@@ -289,7 +299,9 @@ O `Restaurante` possui identificador, nome, endereço e coordenadas. Sua localiz
 
 As funções de `utilities/files.py` fazem a conversão dos registros em objetos dessas classes. `ler_bares()` interpreta a geometria do CSV para criar os restaurantes, enquanto `ler_entregadores()` e `criar_entregadores()` criam entregadores a partir do CSV ou dos registros da geração. Na interface, os restaurantes são consultados diretamente na tabela carregada com pandas, e os objetos `Entregador` são criados para trabalhar com a Frota.
 
-A classe `Frota`, em `src/frota.py`, reúne os objetos `Entregador` e sua integração com a Trie compacta. Na construção da Frota, os Geohashes são calculados a partir das coordenadas corrigidas, e os entregadores são inseridos no índice.
+A classe `Frota`, em `src/frota.py`, reúne os entregadores selecionados para o cálculo das rotas e organiza os resultados apresentados na interface. A construção e a reutilização do índice espacial ficam no módulo `utilities/indice.py`.
+
+Cada geração recebe um identificador próprio. A função `obter_trie_entregadores()` utiliza esse identificador para construir a Trie com as posições corrigidas e reutilizá-la nas atualizações do mapa, do resumo e da tabela. Dessa forma, trocar o restaurante ou o raio não exige reinserir todos os entregadores no índice. O servidor mantém até oito gerações em memória e remove a menos recentemente utilizada ao ultrapassar esse limite. Se um índice não estiver mais disponível, ele é reconstruído a partir dos registros da geração. Um bloqueio evita construções simultâneas do mesmo índice por callbacks concorrentes.
 
 O método `_localizar_entregador()` prepara a posição de cada entregador na malha, aproveitando a identificação da aresta armazenada. Quando todos os identificadores estão ausentes, procura a rua mais próxima; quando estão parcialmente preenchidos, informa o problema.
 
@@ -320,6 +332,52 @@ O tempo dos trechos parciais é calculado utilizando a velocidade da aresta corr
 O critério da busca continua sendo a menor distância. O tempo apresentado corresponde a esse mesmo percurso, sem uma busca separada pela rota mais rápida. A estimativa não considera trânsito, semáforos, paradas ou preparação do pedido.
 
 As verificações realizadas incluíram trechos parciais, sentidos disponíveis, pontos nos extremos, arestas paralelas e ausência de caminho. Também foram conferidas a associação dos resultados aos IDs, a ordenação e a atualização das consultas sem regenerar as posições dos entregadores.
+
+## 9. Análise experimental das consultas
+
+Os experimentos foram realizados em 20/10/2026, em um Mac com Apple M4, 10 núcleos, 16 GiB de memória e macOS 27.0.1, utilizando a imagem Docker `tropafood-app`, com Linux ARM64, Python 3.10.22, OSMnx 2.0.7 e Dash 4.4.1. Foi utilizada a base completa de 20.859 restaurantes e a malha local com 32.781 nós e 83.993 arestas dirigidas.
+
+Foram geradas frotas de 1.000 e 5.000 entregadores, com desvio padrão de 500 metros. Para permitir a reprodução dos resultados, foi utilizada a semente `20261020 + N`, em que `N` é o tamanho da frota. A geração, a correção para as ruas e a construção inicial da Trie foram realizadas antes das medições. As consultas de uma mesma frota reutilizaram os mesmos entregadores e o mesmo índice.
+
+Cada cenário foi executado uma vez para aquecimento e depois repetido cinco vezes. O tempo foi medido com `perf_counter`, realizando dois pedidos locais aos callbacks reais do Dash, pelo cliente de teste do Flask: primeiro mapa e resumo; depois tabela e rotas. A coluna **Total** é a soma desses processamentos em sequência. Ela inclui a serialização local dos pedidos e respostas e, na tabela, o carregamento e a preparação da malha feitos pela aplicação em cada consulta. Não inclui geração da frota, aquecimento, download inicial da malha, comunicação de rede ou renderização no navegador. Na interface, os callbacks podem executar em paralelo; portanto, esse total não representa diretamente o tempo entre um clique e o fim da atualização visual.
+
+Os restaurantes consultados foram **NECTAR DA SERRA LTDA**, no bairro Cruzeiro, e **BAR E CAFE DONATELO LTDA**, no Jardim Atlântico. Os tempos abaixo são médias em segundos; a coluna **Sem rota** está incluída no total de selecionados.
+
+| Caso | Frota | Restaurante | Raio (m) | Selecionados | Sem rota | Mapa e resumo (s) | Tabela e rotas (s) | Total (s) |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| C1 | 1.000 | Néctar da Serra | 1.000 | 7 | 0 | 0,042 | 4,583 | 4,625 |
+| C2 | 5.000 | Néctar da Serra | 1.000 | 34 | 0 | 0,181 | 4,563 | 4,745 |
+| C3 | 5.000 | Néctar da Serra | 2.000 | 171 | 2 | 0,187 | 4,772 | 4,959 |
+| C4 | 5.000 | Donatelo | 2.000 | 176 | 0 | 0,181 | 4,801 | 4,982 |
+| C5 | 5.000 | Néctar da Serra | 100 | 1 | 0 | 0,182 | 4,621 | 4,803 |
+
+Os intervalos observados para o tempo total foram: C1: 4,577 a 4,713 s; C2: 4,715 a 4,790 s; C3: 4,852 a 5,007 s; C4: 4,961 a 5,040 s; C5: 4,743 a 4,840 s. As repetições de cada cenário retornaram os mesmos IDs, distâncias e tempos estimados.
+
+Comparando C1 e C2, o aumento da frota de 1.000 para 5.000 entregadores elevou o número selecionado de 7 para 34, mantendo o restaurante e o raio. Comparando C2 e C3, o aumento do raio de 1 km para 2 km elevou a seleção de 34 para 171 entregadores. C3 e C4 mostram resultados diferentes para dois restaurantes com a mesma frota e o mesmo raio, conforme a distribuição espacial dos entregadores.
+
+A etapa de tabela e rotas concentrou a maior parte do tempo nos cenários medidos. Ela inclui o carregamento da malha e a preparação das velocidades e dos tempos, além do cálculo dos caminhos. Mesmo C5, com apenas um selecionado, apresentou esse custo. Esses resultados descrevem os cenários e o ambiente utilizados; não determinam, por si só, a complexidade assintótica nem o desempenho para qualquer tamanho de frota.
+
+**Raio geográfico e distância pelas ruas.** Em C3, 169 dos 171 selecionados tiveram caminho encontrado; os outros dois foram apresentados como **Sem rota**. Entre os 169 caminhos, 84 ultrapassaram os 2.000 metros do raio. Por exemplo, o `entregador_1662` estava a aproximadamente **1.794,3 metros de distância geográfica** do restaurante, mas seu percurso pelas ruas foi de **2.594,8 metros**, com estimativa de **2 min 48 s**. Ele permaneceu no resultado porque a seleção utiliza o raio geográfico, enquanto a tabela informa o percurso viário. O limite do raio não é reaplicado como limite de comprimento da rota.
+
+**Registros da interface.** As imagens foram obtidas em uma instância separada da mesma aplicação, com as mesmas sementes de geração. A consulta C1 teve seus sete resultados conferidos; em C3, foram conferidos a contagem de 171 registros, o exemplo acima e os dois casos sem rota. Em C4, os 176 IDs, comprimentos de rota e tempos exibidos foram comparados aos registros do experimento. O ajuste da semente foi feito somente no processo usado para produzir as imagens, sem modificar o código da aplicação.
+
+![Consulta C1: 1.000 entregadores e raio geográfico de 1.000 metros](assets/images/experimentos/consulta_c1.jpg)
+
+Consulta C1 com os sete selecionados e a tabela ordenada pela distância viária.
+
+![Consulta C3: mapa com 5.000 entregadores e raio geográfico de 2.000 metros](assets/images/experimentos/consulta_c3_mapa.jpg)
+
+Consulta C3 com o raio geográfico e 171 entregadores selecionados pelos filtros.
+
+![Consulta C3: tabela rolada até o entregador com percurso de 2.594,8 metros](assets/images/experimentos/consulta_c3_tabela.jpg)
+
+Detalhe da tabela de C3, rolada até o `entregador_1662`. A coluna de distância viária mostra 2.594,8 metros, embora o raio selecionado seja de 2.000 metros.
+
+![Consulta C4: resultados no Bar e Café Donatelo](assets/images/experimentos/consulta_c4.jpg)
+
+Consulta C4 com 176 selecionados em outra região de Belo Horizonte.
+
+Os [resultados consolidados](docs/experimentos/saidas/resultados_consultas.csv), os [tempos das 25 medições](docs/experimentos/saidas/tempos_brutos.csv), as frotas e os detalhes por entregador estão em `docs/experimentos/saidas/`. O [script de medição](docs/experimentos/medir.py) e o registro do ambiente acompanham os resultados. Os comprimentos de rota registrados nos detalhes têm a precisão exibida pela tabela, de uma casa decimal.
 
 ## INTEGRANTES
 
