@@ -157,7 +157,7 @@ A modulo `src/simulador.py` contém a geração e a correção das posições do
 A função `gerar_entregadores_normais` é responsável pela geração da posição inicial dos entregadores. Dado N sendo o Número de Entregadores a serem gerados e M o número de restaurante, a geração é feita da seguinte forma:
 
 - lê a geometria de cada bar e usa suas coordenadas $x$, $y$, projetadas em metros como centro da distribuição normal.
-- A quantidade solicitada é dividida entre os bares: todos recebem a mesma inteira quantidade $E$, obtida através de \(\lfloor N/M \rfloor\), e o resto R, caso a divisão não seja inteira, é distribuído aleatoriamente entre alguns bares.
+- A quantidade solicitada é dividida entre os bares: todos recebem a mesma inteira quantidade $E$, obtida através de $\lfloor N/M \rfloor$, e o resto R, caso a divisão não seja inteira, é distribuído aleatoriamente entre alguns bares.
 - Para cada posição, são geradas coordenadas $x$ e $y$ com o desvio padrão configurado, que por padrão é 400 metros, a fim de não serem gerados varios entregadores no mesmo ponto.
 
 Cada entregador recebe um id, o nome do bar de origem, as coordenadas matemáticas em metros ('EPSG:31983') e sua conversão para latitude e longitude ('EPSG:4326').
