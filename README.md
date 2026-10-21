@@ -96,8 +96,8 @@ tropafood/
 │   ├── constants.py             # Configurações compartilhadas
 │   ├── files.py                 # Leitura de dados
 │   └── interface.py             # Preparação do mapa
-├── dockerfile                
-├── main.py                    
+├── dockerfile              
+├── main.py                  
 └── requirements.txt
 ```
 
@@ -127,6 +127,8 @@ Ao final da intercalação, teremos uma cadeia de 40 bits intercados (20 de long
 Ao final, teremos uma indexação de 8 caracteres, como por exemplo: "7h2whsem". Essa string é referente à seguinte região em um mapa:
 ![1792532107160](image/README/1792532107160.png)
 
+Assim como foi necessário definir a codificação das coordenadas para o Geohash, também foi preciso realizar a engenharia reversa e descodificar um geohash. Isso para quando precisamos buscar um restaurante a partir do seu geohash. A lógica é bem simples, é literalmente desfazer todos os passos que fizemos para sair de uma coordenada para chegar até o geohash.
+
 ## 3. Árvore Trie Compacta
 
 A árvore Trie Compacta, é uma estrutura de dados vista nas aulas que é, em essência uma árvore de prefixos. A ideia é armazenar strings de uma forma que seja fácil encontrar strings com prefixos iguais. Em nosso código, os seus nós são representados pela classe *TrieNode* que é composta por 3 atributos:
@@ -135,7 +137,7 @@ A árvore Trie Compacta, é uma estrutura de dados vista nas aulas que é, em es
 - *filhos:* é um dicionário contendo os nós-filho daquele nó;
 - *entregadores:* é uma lista dos entregadores que estão vinculados àquele rótulo terminal. Note que um entregador só constará na lista se o seu geohash terminar a sua inserção na Trie naquele nó. Esse atributo pode ser utilizado para saber se aquele nó é um nó com valor (possui entregador) ou não, basta verificar se a lista está vazia ou não.
 
-Além disso, nós implementamos dois métodos para a classe *TrieCompacta:* 
+Além disso, nós implementamos dois métodos para a classe *TrieCompacta:*
 
 *1. insert(entregador): $O(m)$, tal que m é o tamanho da string.* É responsável por inserir o geohash do entregador passado como parâmetro, vamos chamar de $g$ na árvore. Percorremos a árvore toda, partindo da raiz e consumindo a string $g$ com o passar dos nós. A ideia é, estando no nó atual, sempre buscar se existe algum filho com o caractere inicial que bate com o caractere na posição [0] do fragmento da cadeia $g$ que ainda não foi consumido.
 
@@ -147,6 +149,22 @@ Se existir, então  caminhamos até o filho e avaliamos como ele consegue consum
 - Se o fragmento foi parcialmente consumido, então deve-se o nó da seguinte forma: definir dois filhos e um pai. O pai conterá como rótulo o prefixo em comum entre o fragmento de $g$ e o rótulo do nó antigo. O restante do rótulo do nó antigo e o restante não consumido de $g$ devem ser nós-filho.
 
 2. *search(geohash): $O(m + k)$, tal que m é o tamanho da string.* Na busca, queremos buscar quais os entregadores referentes a um determinado geohash. Note que aqui existe uma sacada: Um geohash que é completamente consumido em um vértice pai deve considerar todos os entregadores dos filhos também, pois estes estão contidos no geohash pai. A busca funciona de forma parecida com a inserção, nós vamos percorremos a string $g$. até que seja completamente consumida dentro da árvore. Se não conseguimos, então retornamos uma lista vazia e a busca falha. Se conseguimos, temos que buscar todos os entregadores daquele nó, considerando também os filhos dele. Fazemos isso utilizando recursividade, parecido com uma DFS $O(k)$, tal que temos $k$ entregadores encontrados, que agrega os entregadores de cada nó.
+
+### 3.1 Busca por restaurantes
+
+Depois de já termos definido a nossa Trie Compacta, é necessário buscar um restaurante, utilizando a sua coordenada convertida para geohash. No entanto, buscar pelo geohash exato do restaurante pode restringir demais a busca e, portanto, nós selecionamos os 6 primeiros caracteres do código geohash do restaurante, para que assim, uma área maior fosse contemplada (região/bairro onde o restaurante se encontra). 
+
+A lógica é simples: temos que percorrer os nós até consumir os 6 caracteres do geohash reduzido. Dessa forma, quando a cadeia for completamente consumida, vai parar em um nó pai e então coletamos todos os filhos, que são entregadores dentro da região delimitada. É simplesmente a aplicação do método .search explicado no bloco anterior.
+
+Além disso, temos que procurar entregadores nos blocos adjacentes, o que será discutido no próximo tópico.
+
+### 3.2 Como tratar pontos adjacentes muito próximos?
+
+A solução que encontramos para tratar pontos que estão muito próximos uns dos outros é dado a posição de um restaurante, buscarmos nas 8 malhas adjacentes à ele:
+
+![1792544891235](image/README/1792544891235.png)
+
+Nós fazemos isso da seguinte forma: Decodificamos o geohash do restaurante, encontrando a sua coordenada em latitude e longitude. Depois disso, calculamos quais as coordenadas do seu centro e qual o erro em relação aos diferentes pontos centrais de cada um dos quadrantes adjacentes. Depois de encontrar os centros, nós podemos calcular os seus respectivos geohashes e efetuamos a busca neles também, a fim de garantir que não perdemos nenhum ponto que estava muito perto do restaurante, mas que não se encontrava no mesmo quadrante.
 
 ## 4. Simulador de Geração de Entregadores
 
@@ -220,11 +238,11 @@ As médias são gravadas em `data/benchmark_frota.csv`.
 Segue abaixo os tempos obtidos ao executar o benchmark na máquina citada anteriormente:
 
 | Entregadores | Geração | Correção para ruas |
-| ---: | ---: | ---: |
-| 1.000 | 0,729 | 0,923 |
-| 10.000 | 0,766 | 1,545 |
-| 100.000 | 1,176 | 8,103 |
-| 1.000.000 | 5,394 | 72,169 |
+| -----------: | --------: | -------------------: |
+|        1.000 |     0,729 |                0,923 |
+|       10.000 |     0,766 |                1,545 |
+|      100.000 |     1,176 |                8,103 |
+|    1.000.000 |     5,394 |               72,169 |
 
 Ao aumentar a frota de 1.000 para 1.000.000 de entregadores (1.000 vezes), o
 tempo medido aumentou cerca de 7,4 vezes na geração e 78 vezes na correção.
