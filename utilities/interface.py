@@ -3,8 +3,30 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import html
 from osmnx.distance import great_circle
+from src.geohash import encode_geohash
+from src.trie import buscar_entregadores_restaurante
 
-def filtrar_entregadores_por_raio(df_entregadores, restaurante, raio_metros):
+def filtrar_entregadores_por_raio(df_entregadores, restaurante, raio_metros, trie):
+    if df_entregadores.empty:
+        return df_entregadores
+
+    geohash_restaurante = encode_geohash(
+        restaurante["LATITUDE"], restaurante["LONGITUDE"]
+    )
+
+    candidatos_trie = buscar_entregadores_restaurante(
+        trie, geohash_restaurante
+    )
+
+    ids_candidatos = {
+        entregador.id_Entregador
+        for entregador in candidatos_trie
+    }
+
+    df_entregadores = df_entregadores.loc[
+        df_entregadores["id_entregador"].isin(ids_candidatos)
+    ]
+
     if df_entregadores.empty:
         return df_entregadores
 
@@ -32,7 +54,7 @@ def plota_mapa_interface(
     raio_metros=1000,
     exibir_raio=False,
     exibir_restaurantes=False,
-    
+    trie=None,
 ):
     fig = go.Figure()
 
@@ -47,7 +69,7 @@ def plota_mapa_interface(
     if not df_entregadores.empty:
         if restaurante is not None:
             no_raio = filtrar_entregadores_por_raio(
-                df_entregadores, restaurante, raio_metros
+                df_entregadores, restaurante, raio_metros, trie
             )
             cores = np.where(
                 df_entregadores.index.isin(no_raio.index), "green", "red"
@@ -169,37 +191,39 @@ def montar_tabela_rotas(resultados):
         return html.P("Nenhum entregador para exibir nesta consulta.")
 
     linhas = []
-    for r in resultados:
-        dist = (
-            f"{r['distancia_metros']:.1f}"
-            if r["distancia_metros"] is not None
-            else "Sem rota"
-        )
-        tempo = (
-            f"{r['tempo_segundos'] / 60:.2f}"
-            if r["tempo_segundos"] is not None
-            else "Sem rota"
-        )
 
-        linhas.append(
-            html.Tr([
-                html.Td(r["id_entregador"]),
-                html.Td(f"{r['latitude']:.6f}"),
-                html.Td(f"{r['longitude']:.6f}"),
-                html.Td(dist),
-                html.Td(tempo),
-            ])
-        )
+    for resultado in resultados:
+        distancia = resultado["distancia_metros"]
+        tempo = resultado["tempo_segundos"]
+
+        tempo_formatado = "Sem rota"
+        if tempo is not None:
+            minutos, segundos = divmod(round(tempo),60)
+            tempo_formatado = f"{minutos} min {segundos:02d} s"
+
+        linhas.append(html.Tr([
+            html.Td(resultado["id_entregador"]),
+            html.Td(f'{resultado["latitude"]:.6f}'),
+            html.Td(f'{resultado["longitude"]:.6f}'),
+            html.Td(
+                "Sem rota"
+                if distancia is None
+                else f"{distancia:.1f}"
+            ),
+            html.Td(tempo_formatado),
+        ]))
 
     return html.Table([
-        html.Thead(
-            html.Tr([
-                html.Th("ID"),
-                html.Th("Latitude"),
-                html.Th("Longitude"),
-                html.Th("Distância (m)"),
-                html.Th("Tempo (min)"),
-            ])
-        ),
+        html.Thead(html.Tr([
+            html.Th("ID"),
+            html.Th("Latitude"),
+            html.Th("Longitude"),
+            html.Th("Distância pelas ruas (m)"),
+            html.Th("Tempo estimado (min e s)"),
+        ])),
         html.Tbody(linhas),
-    ])
+    ], style={
+        "width": "100%",
+        "textAlign": "left",
+        "borderCollapse": "collapse",
+    })

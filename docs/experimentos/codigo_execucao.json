@@ -1,0 +1,22 @@
+{
+  "commit": "7340d3015ddcb61b23d1a4b33a3e1e7922774ca2",
+  "sha256": {
+    "app.py": "1cd717c224ff7ea224c05e23d03f33d3ce4fc1efa7ae96771aae2891415a61c9",
+    "main.py": "709847f11139589a39359e6eef856bd5d360c0b3e743d00b580ef2e704e39b60",
+    "src/simulador.py": "8d093c815ed15829b344b6d83c1824420ba0b77f1ca41b1d21e89b8ef65b2453",
+    "src/rotas.py": "15784cbd164f6be6764acaf48654561c7ff3d81f91ebf7ee14a587c3c9d1bbce",
+    "src/frota.py": "214fa9435d4863d882a3e9696b78f7150f852d7b2754905c0cacdfcfe7f68c98",
+    "src/grafo.py": "9d67d770c4c2e81a1f86bff78a5b11c17c9d3c98a8b77548f5b0b4b847bc652a",
+    "src/geohash.py": "961be240b2315dd56918f9bc5efa17f1048ab9b62a864c681ea690d1854e03f7",
+    "src/trie.py": "589756f2eb6c0a8599fc9997c3c671ad4642335235eddadb06d3a2a93573a3e0",
+    "entities/restaurante.py": "ed5d4d57eca2a7aff8140f46ca32937fff8cfe76190c7ed4af3422e40ef0d15d",
+    "entities/entregador.py": "f7bb2bf59569add2389e35f251707dc680cac003c68abf552b3347544f429225",
+    "utilities/files.py": "fdfe1c8299def1748952fd9291b1c74212d305851faedaba2addfe1bb6d89f02",
+    "utilities/constants.py": "b693f1b0307602750b5c074001a707e4323570e7a0890ef4c32f1137f35c1b75",
+    "utilities/interface.py": "26be13ded39a3ed2fa3be08de4109aa25a8c04c1cf2ee71e75825ef01e51f82e",
+    "utilities/indice.py": "3246c59661285f72ecc02cc83ce444b68239f27fdc39185e9477b22184ef1b09",
+    "README.md": "6d677fc005d761c3067376e6d11c5ed85f7aacf9e73a2817c38e106f6b143d19",
+    "data/bares.csv": "68266c8ec5091b9b47337cddba981bd3751ad9a3104e4c8406646554d14b19ba",
+    "data/malha_bh_drive_31983.graphml": "1801c77aa6a66b1545aa8492dfc822f3db29d6c66ed0d31faa0523fd1a6e6d6b"
+  }
+}

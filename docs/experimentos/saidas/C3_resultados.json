@@ -1,0 +1,1370 @@
+[
+  {
+    "id_entregador": "entregador_467",
+    "latitude": -19.945790199999998,
+    "longitude": -43.9172749,
+    "distancia_geografica_m": 521.2069559540928,
+    "distancia_viaria_m": 624.6,
+    "tempo_exibido": "0 min 56 s"
+  },
+  {
+    "id_entregador": "entregador_236",
+    "latitude": -19.9489228715859,
+    "longitude": -43.923072235654935,
+    "distancia_geografica_m": 254.5119885444828,
+    "distancia_viaria_m": 708.9,
+    "tempo_exibido": "1 min 02 s"
+  },
+  {
+    "id_entregador": "entregador_2861",
+    "latitude": -19.9456169235756,
+    "longitude": -43.919030841394516,
+    "distancia_geografica_m": 436.5754012855902,
+    "distancia_viaria_m": 715.0,
+    "tempo_exibido": "1 min 07 s"
+  },
+  {
+    "id_entregador": "entregador_3346",
+    "latitude": -19.94405134492217,
+    "longitude": -43.91682334907913,
+    "distancia_geografica_m": 701.9089981380253,
+    "distancia_viaria_m": 895.2,
+    "tempo_exibido": "1 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_1079",
+    "latitude": -19.94346630624949,
+    "longitude": -43.92243134702719,
+    "distancia_geografica_m": 667.361150087128,
+    "distancia_viaria_m": 914.1,
+    "tempo_exibido": "1 min 01 s"
+  },
+  {
+    "id_entregador": "entregador_94",
+    "latitude": -19.94936980500811,
+    "longitude": -43.92075026741596,
+    "distancia_geografica_m": 17.987288324612418,
+    "distancia_viaria_m": 917.7,
+    "tempo_exibido": "1 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_4298",
+    "latitude": -19.946990490384632,
+    "longitude": -43.92268285665689,
+    "distancia_geografica_m": 326.8991664032444,
+    "distancia_viaria_m": 988.0,
+    "tempo_exibido": "1 min 22 s"
+  },
+  {
+    "id_entregador": "entregador_2871",
+    "latitude": -19.94187273239701,
+    "longitude": -43.9254938740065,
+    "distancia_geografica_m": 961.7831095747775,
+    "distancia_viaria_m": 1054.4,
+    "tempo_exibido": "1 min 11 s"
+  },
+  {
+    "id_entregador": "entregador_91",
+    "latitude": -19.944255652162198,
+    "longitude": -43.921937131158366,
+    "distancia_geografica_m": 569.263152561313,
+    "distancia_viaria_m": 1088.1,
+    "tempo_exibido": "1 min 45 s"
+  },
+  {
+    "id_entregador": "entregador_2833",
+    "latitude": -19.95044456495652,
+    "longitude": -43.92350835855631,
+    "distancia_geografica_m": 326.84925086957514,
+    "distancia_viaria_m": 1094.1,
+    "tempo_exibido": "1 min 39 s"
+  },
+  {
+    "id_entregador": "entregador_3239",
+    "latitude": -19.943799497601088,
+    "longitude": -43.920499186142834,
+    "distancia_geografica_m": 604.3348773416815,
+    "distancia_viaria_m": 1119.6,
+    "tempo_exibido": "1 min 20 s"
+  },
+  {
+    "id_entregador": "entregador_3362",
+    "latitude": -19.945064158655512,
+    "longitude": -43.92769637337497,
+    "distancia_geografica_m": 869.3625543904253,
+    "distancia_viaria_m": 1143.4,
+    "tempo_exibido": "1 min 38 s"
+  },
+  {
+    "id_entregador": "entregador_1849",
+    "latitude": -19.9422447,
+    "longitude": -43.9209202,
+    "distancia_geografica_m": 777.4653765477775,
+    "distancia_viaria_m": 1152.9,
+    "tempo_exibido": "1 min 48 s"
+  },
+  {
+    "id_entregador": "entregador_37",
+    "latitude": -19.943595482061497,
+    "longitude": -43.922477003480935,
+    "distancia_geografica_m": 654.9418904984109,
+    "distancia_viaria_m": 1167.3,
+    "tempo_exibido": "1 min 54 s"
+  },
+  {
+    "id_entregador": "entregador_4524",
+    "latitude": -19.942262699999997,
+    "longitude": -43.9211049,
+    "distancia_geografica_m": 776.3830015216914,
+    "distancia_viaria_m": 1172.3,
+    "tempo_exibido": "1 min 50 s"
+  },
+  {
+    "id_entregador": "entregador_4894",
+    "latitude": -19.942491204013773,
+    "longitude": -43.91825270072841,
+    "distancia_geografica_m": 790.6709959366447,
+    "distancia_viaria_m": 1181.4,
+    "tempo_exibido": "1 min 53 s"
+  },
+  {
+    "id_entregador": "entregador_1400",
+    "latitude": -19.941564759489435,
+    "longitude": -43.92216145677481,
+    "distancia_geografica_m": 866.925593251082,
+    "distancia_viaria_m": 1236.3,
+    "tempo_exibido": "1 min 36 s"
+  },
+  {
+    "id_entregador": "entregador_1936",
+    "latitude": -19.941094653781786,
+    "longitude": -43.92586945452657,
+    "distancia_geografica_m": 1056.0935502091907,
+    "distancia_viaria_m": 1297.7,
+    "tempo_exibido": "1 min 38 s"
+  },
+  {
+    "id_entregador": "entregador_135",
+    "latitude": -19.943948749802658,
+    "longitude": -43.92791338548452,
+    "distancia_geografica_m": 959.181213797138,
+    "distancia_viaria_m": 1307.5,
+    "tempo_exibido": "1 min 56 s"
+  },
+  {
+    "id_entregador": "entregador_2023",
+    "latitude": -19.941147257003685,
+    "longitude": -43.915566677399866,
+    "distancia_geografica_m": 1044.8065725083743,
+    "distancia_viaria_m": 1319.5,
+    "tempo_exibido": "2 min 09 s"
+  },
+  {
+    "id_entregador": "entregador_1685",
+    "latitude": -19.94350700160612,
+    "longitude": -43.92729057199467,
+    "distancia_geografica_m": 941.1063060900331,
+    "distancia_viaria_m": 1321.7,
+    "tempo_exibido": "1 min 57 s"
+  },
+  {
+    "id_entregador": "entregador_380",
+    "latitude": -19.943304779483725,
+    "longitude": -43.9215054361545,
+    "distancia_geografica_m": 665.0155007598544,
+    "distancia_viaria_m": 1333.8,
+    "tempo_exibido": "2 min 07 s"
+  },
+  {
+    "id_entregador": "entregador_794",
+    "latitude": -19.948671282129418,
+    "longitude": -43.928932815262456,
+    "distancia_geografica_m": 866.9885072264883,
+    "distancia_viaria_m": 1348.4,
+    "tempo_exibido": "2 min 09 s"
+  },
+  {
+    "id_entregador": "entregador_2885",
+    "latitude": -19.939999932030545,
+    "longitude": -43.92491886687948,
+    "distancia_geografica_m": 1118.9744281973462,
+    "distancia_viaria_m": 1348.5,
+    "tempo_exibido": "1 min 48 s"
+  },
+  {
+    "id_entregador": "entregador_3131",
+    "latitude": -19.944284064795603,
+    "longitude": -43.92512751035873,
+    "distancia_geografica_m": 721.6904609252025,
+    "distancia_viaria_m": 1364.1,
+    "tempo_exibido": "2 min 03 s"
+  },
+  {
+    "id_entregador": "entregador_4260",
+    "latitude": -19.940400000000004,
+    "longitude": -43.9211538,
+    "distancia_geografica_m": 983.4671866284096,
+    "distancia_viaria_m": 1396.6,
+    "tempo_exibido": "2 min 11 s"
+  },
+  {
+    "id_entregador": "entregador_4713",
+    "latitude": -19.941279924403545,
+    "longitude": -43.92475904990949,
+    "distancia_geografica_m": 982.6170832343914,
+    "distancia_viaria_m": 1412.5,
+    "tempo_exibido": "1 min 52 s"
+  },
+  {
+    "id_entregador": "entregador_1891",
+    "latitude": -19.944360712686276,
+    "longitude": -43.9296169227488,
+    "distancia_geografica_m": 1081.6734459524475,
+    "distancia_viaria_m": 1441.6,
+    "tempo_exibido": "2 min 06 s"
+  },
+  {
+    "id_entregador": "entregador_774",
+    "latitude": -19.943098780303416,
+    "longitude": -43.92820146237044,
+    "distancia_geografica_m": 1042.3938360064058,
+    "distancia_viaria_m": 1443.3,
+    "tempo_exibido": "2 min 11 s"
+  },
+  {
+    "id_entregador": "entregador_3170",
+    "latitude": -19.939371794728658,
+    "longitude": -43.91668398036535,
+    "distancia_geografica_m": 1172.5485553333556,
+    "distancia_viaria_m": 1447.2,
+    "tempo_exibido": "2 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_1601",
+    "latitude": -19.949486968815155,
+    "longitude": -43.929071644076096,
+    "distancia_geografica_m": 879.7055939560989,
+    "distancia_viaria_m": 1472.1,
+    "tempo_exibido": "2 min 21 s"
+  },
+  {
+    "id_entregador": "entregador_1347",
+    "latitude": -19.949664208802655,
+    "longitude": -43.9290030189287,
+    "distancia_geografica_m": 873.3977088597425,
+    "distancia_viaria_m": 1493.1,
+    "tempo_exibido": "2 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_1308",
+    "latitude": -19.94899767686663,
+    "longitude": -43.917358828797894,
+    "distancia_geografica_m": 345.99181655738056,
+    "distancia_viaria_m": 1500.0,
+    "tempo_exibido": "2 min 38 s"
+  },
+  {
+    "id_entregador": "entregador_1090",
+    "latitude": -19.949089307992594,
+    "longitude": -43.93036231188337,
+    "distancia_geografica_m": 1014.2798456827073,
+    "distancia_viaria_m": 1505.4,
+    "tempo_exibido": "2 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_4862",
+    "latitude": -19.93772977371762,
+    "longitude": -43.92663432230707,
+    "distancia_geografica_m": 1423.3511899491618,
+    "distancia_viaria_m": 1526.4,
+    "tempo_exibido": "1 min 35 s"
+  },
+  {
+    "id_entregador": "entregador_4016",
+    "latitude": -19.951138728190983,
+    "longitude": -43.928776329770905,
+    "distancia_geografica_m": 874.4614888822091,
+    "distancia_viaria_m": 1532.2,
+    "tempo_exibido": "2 min 21 s"
+  },
+  {
+    "id_entregador": "entregador_1425",
+    "latitude": -19.949790596362483,
+    "longitude": -43.92831299389263,
+    "distancia_geografica_m": 802.3578630832716,
+    "distancia_viaria_m": 1543.4,
+    "tempo_exibido": "2 min 30 s"
+  },
+  {
+    "id_entregador": "entregador_927",
+    "latitude": -19.938215364148178,
+    "longitude": -43.92664019200534,
+    "distancia_geografica_m": 1375.3133958934234,
+    "distancia_viaria_m": 1548.1,
+    "tempo_exibido": "1 min 35 s"
+  },
+  {
+    "id_entregador": "entregador_929",
+    "latitude": -19.942101139315778,
+    "longitude": -43.927916527425076,
+    "distancia_geografica_m": 1097.333949113312,
+    "distancia_viaria_m": 1558.2,
+    "tempo_exibido": "2 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_3987",
+    "latitude": -19.93973013257925,
+    "longitude": -43.91736748231166,
+    "distancia_geografica_m": 1111.2189534274235,
+    "distancia_viaria_m": 1563.3,
+    "tempo_exibido": "2 min 29 s"
+  },
+  {
+    "id_entregador": "entregador_1243",
+    "latitude": -19.939143292205824,
+    "longitude": -43.924575964925566,
+    "distancia_geografica_m": 1194.2041263279455,
+    "distancia_viaria_m": 1575.6,
+    "tempo_exibido": "2 min 13 s"
+  },
+  {
+    "id_entregador": "entregador_4282",
+    "latitude": -19.94056264158781,
+    "longitude": -43.92880297055235,
+    "distancia_geografica_m": 1286.0288597345043,
+    "distancia_viaria_m": 1576.3,
+    "tempo_exibido": "2 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_3280",
+    "latitude": -19.94626726770478,
+    "longitude": -43.93092131218372,
+    "distancia_geografica_m": 1122.1216363755952,
+    "distancia_viaria_m": 1593.1,
+    "tempo_exibido": "2 min 35 s"
+  },
+  {
+    "id_entregador": "entregador_3043",
+    "latitude": -19.945391771826902,
+    "longitude": -43.93068030821053,
+    "distancia_geografica_m": 1131.1184563204813,
+    "distancia_viaria_m": 1610.4,
+    "tempo_exibido": "2 min 22 s"
+  },
+  {
+    "id_entregador": "entregador_2412",
+    "latitude": -19.941985248255868,
+    "longitude": -43.929945755804304,
+    "distancia_geografica_m": 1261.5512372574128,
+    "distancia_viaria_m": 1610.9,
+    "tempo_exibido": "2 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_4839",
+    "latitude": -19.939465328651647,
+    "longitude": -43.924251767399795,
+    "distancia_geografica_m": 1149.1149965076809,
+    "distancia_viaria_m": 1643.2,
+    "tempo_exibido": "2 min 21 s"
+  },
+  {
+    "id_entregador": "entregador_2691",
+    "latitude": -19.937810729128824,
+    "longitude": -43.91646152498199,
+    "distancia_geografica_m": 1343.694795813886,
+    "distancia_viaria_m": 1663.3,
+    "tempo_exibido": "2 min 47 s"
+  },
+  {
+    "id_entregador": "entregador_2719",
+    "latitude": -19.937565412953635,
+    "longitude": -43.91936089244697,
+    "distancia_geografica_m": 1304.3849112274697,
+    "distancia_viaria_m": 1665.8,
+    "tempo_exibido": "2 min 43 s"
+  },
+  {
+    "id_entregador": "entregador_556",
+    "latitude": -19.94056346672026,
+    "longitude": -43.929675026684244,
+    "distancia_geografica_m": 1348.0275082786993,
+    "distancia_viaria_m": 1668.6,
+    "tempo_exibido": "2 min 19 s"
+  },
+  {
+    "id_entregador": "entregador_1445",
+    "latitude": -19.93882434076717,
+    "longitude": -43.914635722819014,
+    "distancia_geografica_m": 1317.5138216479627,
+    "distancia_viaria_m": 1681.0,
+    "tempo_exibido": "2 min 49 s"
+  },
+  {
+    "id_entregador": "entregador_2393",
+    "latitude": -19.93860947441647,
+    "longitude": -43.92834042565835,
+    "distancia_geografica_m": 1428.2213490802985,
+    "distancia_viaria_m": 1699.1,
+    "tempo_exibido": "1 min 53 s"
+  },
+  {
+    "id_entregador": "entregador_4756",
+    "latitude": -19.938604863411452,
+    "longitude": -43.928359633704325,
+    "distancia_geografica_m": 1429.774677417465,
+    "distancia_viaria_m": 1701.1,
+    "tempo_exibido": "1 min 54 s"
+  },
+  {
+    "id_entregador": "entregador_925",
+    "latitude": -19.93713867370267,
+    "longitude": -43.92896787769081,
+    "distancia_geografica_m": 1600.7951121894264,
+    "distancia_viaria_m": 1712.6,
+    "tempo_exibido": "1 min 54 s"
+  },
+  {
+    "id_entregador": "entregador_2611",
+    "latitude": -19.94942784797166,
+    "longitude": -43.91422905769015,
+    "distancia_geografica_m": 672.4902423832104,
+    "distancia_viaria_m": 1721.5,
+    "tempo_exibido": "3 min 02 s"
+  },
+  {
+    "id_entregador": "entregador_4589",
+    "latitude": -19.948938164387073,
+    "longitude": -43.93245174508622,
+    "distancia_geografica_m": 1232.9833082765872,
+    "distancia_viaria_m": 1731.7,
+    "tempo_exibido": "2 min 51 s"
+  },
+  {
+    "id_entregador": "entregador_206",
+    "latitude": -19.94046947207079,
+    "longitude": -43.92929780481184,
+    "distancia_geografica_m": 1328.4126078213228,
+    "distancia_viaria_m": 1740.3,
+    "tempo_exibido": "1 min 50 s"
+  },
+  {
+    "id_entregador": "entregador_4113",
+    "latitude": -19.942967540303176,
+    "longitude": -43.93040711561866,
+    "distancia_geografica_m": 1234.2364114499417,
+    "distancia_viaria_m": 1748.9,
+    "tempo_exibido": "2 min 40 s"
+  },
+  {
+    "id_entregador": "entregador_402",
+    "latitude": -19.938360036830225,
+    "longitude": -43.92872917084034,
+    "distancia_geografica_m": 1474.1127303395251,
+    "distancia_viaria_m": 1762.2,
+    "tempo_exibido": "2 min 00 s"
+  },
+  {
+    "id_entregador": "entregador_1452",
+    "latitude": -19.94066903714287,
+    "longitude": -43.93039091217592,
+    "distancia_geografica_m": 1393.3096369882226,
+    "distancia_viaria_m": 1764.0,
+    "tempo_exibido": "2 min 29 s"
+  },
+  {
+    "id_entregador": "entregador_3375",
+    "latitude": -19.940738489595272,
+    "longitude": -43.930412093651,
+    "distancia_geografica_m": 1389.6664097274806,
+    "distancia_viaria_m": 1772.0,
+    "tempo_exibido": "2 min 30 s"
+  },
+  {
+    "id_entregador": "entregador_172",
+    "latitude": -19.948990409772076,
+    "longitude": -43.91397367117207,
+    "distancia_geografica_m": 699.3508134591215,
+    "distancia_viaria_m": 1780.0,
+    "tempo_exibido": "3 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_4909",
+    "latitude": -19.9355656023989,
+    "longitude": -43.92499611881375,
+    "distancia_geografica_m": 1585.8330480208356,
+    "distancia_viaria_m": 1787.5,
+    "tempo_exibido": "1 min 50 s"
+  },
+  {
+    "id_entregador": "entregador_1430",
+    "latitude": -19.93820274399539,
+    "longitude": -43.9141863616669,
+    "distancia_geografica_m": 1400.7003940641898,
+    "distancia_viaria_m": 1792.5,
+    "tempo_exibido": "3 min 02 s"
+  },
+  {
+    "id_entregador": "entregador_4542",
+    "latitude": -19.9427662500708,
+    "longitude": -43.93082554019636,
+    "distancia_geografica_m": 1282.9885793417093,
+    "distancia_viaria_m": 1798.0,
+    "tempo_exibido": "2 min 46 s"
+  },
+  {
+    "id_entregador": "entregador_898",
+    "latitude": -19.947427792177855,
+    "longitude": -43.932588514167264,
+    "distancia_geografica_m": 1262.8931174869333,
+    "distancia_viaria_m": 1813.2,
+    "tempo_exibido": "2 min 55 s"
+  },
+  {
+    "id_entregador": "entregador_4998",
+    "latitude": -19.936234531130953,
+    "longitude": -43.92739351926231,
+    "distancia_geografica_m": 1607.5770632638194,
+    "distancia_viaria_m": 1821.6,
+    "tempo_exibido": "2 min 01 s"
+  },
+  {
+    "id_entregador": "entregador_150",
+    "latitude": -19.93581223073706,
+    "longitude": -43.91735197048252,
+    "distancia_geografica_m": 1531.775426226502,
+    "distancia_viaria_m": 1847.7,
+    "tempo_exibido": "3 min 03 s"
+  },
+  {
+    "id_entregador": "entregador_3980",
+    "latitude": -19.939851712293493,
+    "longitude": -43.92979053486946,
+    "distancia_geografica_m": 1413.8334051088138,
+    "distancia_viaria_m": 1851.8,
+    "tempo_exibido": "1 min 56 s"
+  },
+  {
+    "id_entregador": "entregador_4751",
+    "latitude": -19.943573113556216,
+    "longitude": -43.91159204225155,
+    "distancia_geografica_m": 1137.6653326154692,
+    "distancia_viaria_m": 1860.7,
+    "tempo_exibido": "3 min 09 s"
+  },
+  {
+    "id_entregador": "entregador_3086",
+    "latitude": -19.934941808420454,
+    "longitude": -43.92887521750737,
+    "distancia_geografica_m": 1806.2374825930763,
+    "distancia_viaria_m": 1863.4,
+    "tempo_exibido": "1 min 53 s"
+  },
+  {
+    "id_entregador": "entregador_2930",
+    "latitude": -19.93973889165822,
+    "longitude": -43.92259070703163,
+    "distancia_geografica_m": 1074.7467834832548,
+    "distancia_viaria_m": 1865.6,
+    "tempo_exibido": "2 min 44 s"
+  },
+  {
+    "id_entregador": "entregador_1190",
+    "latitude": -19.944708376212382,
+    "longitude": -43.933203277675524,
+    "distancia_geografica_m": 1404.3086010873026,
+    "distancia_viaria_m": 1870.6,
+    "tempo_exibido": "3 min 06 s"
+  },
+  {
+    "id_entregador": "entregador_2009",
+    "latitude": -19.939908200245846,
+    "longitude": -43.929532105471885,
+    "distancia_geografica_m": 1391.0526788371553,
+    "distancia_viaria_m": 1879.6,
+    "tempo_exibido": "2 min 00 s"
+  },
+  {
+    "id_entregador": "entregador_1950",
+    "latitude": -19.936768490169843,
+    "longitude": -43.93057081341405,
+    "distancia_geografica_m": 1730.3280199546064,
+    "distancia_viaria_m": 1885.1,
+    "tempo_exibido": "2 min 13 s"
+  },
+  {
+    "id_entregador": "entregador_1053",
+    "latitude": -19.936753345328995,
+    "longitude": -43.93063588412699,
+    "distancia_geografica_m": 1735.7548698125538,
+    "distancia_viaria_m": 1892.2,
+    "tempo_exibido": "2 min 14 s"
+  },
+  {
+    "id_entregador": "entregador_201",
+    "latitude": -19.93609746107595,
+    "longitude": -43.92947005072191,
+    "distancia_geografica_m": 1726.6339554124208,
+    "distancia_viaria_m": 1892.5,
+    "tempo_exibido": "2 min 14 s"
+  },
+  {
+    "id_entregador": "entregador_1589",
+    "latitude": -19.941621397477828,
+    "longitude": -43.928430118967086,
+    "distancia_geografica_m": 1172.9928145487054,
+    "distancia_viaria_m": 1896.5,
+    "tempo_exibido": "2 min 42 s"
+  },
+  {
+    "id_entregador": "entregador_510",
+    "latitude": -19.94441103925361,
+    "longitude": -43.93312172448091,
+    "distancia_geografica_m": 1408.602952973694,
+    "distancia_viaria_m": 1904.7,
+    "tempo_exibido": "3 min 09 s"
+  },
+  {
+    "id_entregador": "entregador_3067",
+    "latitude": -19.935988813351603,
+    "longitude": -43.92944022561857,
+    "distancia_geografica_m": 1735.2142844984405,
+    "distancia_viaria_m": 1904.9,
+    "tempo_exibido": "2 min 15 s"
+  },
+  {
+    "id_entregador": "entregador_2896",
+    "latitude": -19.936625404644186,
+    "longitude": -43.927640787863496,
+    "distancia_geografica_m": 1580.3832305752494,
+    "distancia_viaria_m": 1913.2,
+    "tempo_exibido": "2 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_4249",
+    "latitude": -19.93495699621531,
+    "longitude": -43.92637303221151,
+    "distancia_geografica_m": 1695.973053882356,
+    "distancia_viaria_m": 1915.4,
+    "tempo_exibido": "2 min 13 s"
+  },
+  {
+    "id_entregador": "entregador_3947",
+    "latitude": -19.93603803673289,
+    "longitude": -43.92106277767891,
+    "distancia_geografica_m": 1467.7436446742447,
+    "distancia_viaria_m": 1947.1,
+    "tempo_exibido": "3 min 03 s"
+  },
+  {
+    "id_entregador": "entregador_1615",
+    "latitude": -19.936558607415396,
+    "longitude": -43.93139844620982,
+    "distancia_geografica_m": 1801.6661360598828,
+    "distancia_viaria_m": 1974.8,
+    "tempo_exibido": "2 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_2753",
+    "latitude": -19.939053011391344,
+    "longitude": -43.930323845668084,
+    "distancia_geografica_m": 1517.1049869886772,
+    "distancia_viaria_m": 1984.0,
+    "tempo_exibido": "2 min 25 s"
+  },
+  {
+    "id_entregador": "entregador_2748",
+    "latitude": -19.937930752781778,
+    "longitude": -43.93112272961681,
+    "distancia_geografica_m": 1665.9423377022886,
+    "distancia_viaria_m": 1999.6,
+    "tempo_exibido": "2 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_3262",
+    "latitude": -19.936490181572648,
+    "longitude": -43.93163940197635,
+    "distancia_geografica_m": 1823.3710698537957,
+    "distancia_viaria_m": 2001.1,
+    "tempo_exibido": "2 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_2644",
+    "latitude": -19.935166935107077,
+    "longitude": -43.92855653950398,
+    "distancia_geografica_m": 1768.4629041082446,
+    "distancia_viaria_m": 2022.3,
+    "tempo_exibido": "2 min 04 s"
+  },
+  {
+    "id_entregador": "entregador_251",
+    "latitude": -19.937976217694597,
+    "longitude": -43.91194846598352,
+    "distancia_geografica_m": 1547.7892361139332,
+    "distancia_viaria_m": 2027.8,
+    "tempo_exibido": "3 min 27 s"
+  },
+  {
+    "id_entregador": "entregador_2739",
+    "latitude": -19.934953027550325,
+    "longitude": -43.91802437544452,
+    "distancia_geografica_m": 1611.5023912207862,
+    "distancia_viaria_m": 2029.3,
+    "tempo_exibido": "3 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_436",
+    "latitude": -19.941218719050795,
+    "longitude": -43.922262335150855,
+    "distancia_geografica_m": 906.6832696812096,
+    "distancia_viaria_m": 2034.7,
+    "tempo_exibido": "3 min 00 s"
+  },
+  {
+    "id_entregador": "entregador_389",
+    "latitude": -19.94319390527057,
+    "longitude": -43.93279915400592,
+    "distancia_geografica_m": 1435.5840413978697,
+    "distancia_viaria_m": 2044.2,
+    "tempo_exibido": "3 min 22 s"
+  },
+  {
+    "id_entregador": "entregador_32",
+    "latitude": -19.94316128890416,
+    "longitude": -43.932790874379876,
+    "distancia_geografica_m": 1436.5200517041305,
+    "distancia_viaria_m": 2047.9,
+    "tempo_exibido": "3 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_2051",
+    "latitude": -19.947247841019774,
+    "longitude": -43.933904644773925,
+    "distancia_geografica_m": 1401.893734960314,
+    "distancia_viaria_m": 2071.0,
+    "tempo_exibido": "3 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_3995",
+    "latitude": -19.934299080226545,
+    "longitude": -43.92287778744614,
+    "distancia_geografica_m": 1676.611626049797,
+    "distancia_viaria_m": 2071.9,
+    "tempo_exibido": "3 min 14 s"
+  },
+  {
+    "id_entregador": "entregador_3026",
+    "latitude": -19.94282500919814,
+    "longitude": -43.932705510358716,
+    "distancia_geografica_m": 1446.695543258366,
+    "distancia_viaria_m": 2086.4,
+    "tempo_exibido": "3 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_4428",
+    "latitude": -19.938514971456446,
+    "longitude": -43.931508177080794,
+    "distancia_geografica_m": 1645.0095714827876,
+    "distancia_viaria_m": 2097.3,
+    "tempo_exibido": "2 min 36 s"
+  },
+  {
+    "id_entregador": "entregador_3047",
+    "latitude": -19.9365350510271,
+    "longitude": -43.932535768008734,
+    "distancia_geografica_m": 1880.0028676331383,
+    "distancia_viaria_m": 2103.3,
+    "tempo_exibido": "2 min 36 s"
+  },
+  {
+    "id_entregador": "entregador_3299",
+    "latitude": -19.933673138427622,
+    "longitude": -43.92456688915979,
+    "distancia_geografica_m": 1777.6574083681437,
+    "distancia_viaria_m": 2126.7,
+    "tempo_exibido": "2 min 10 s"
+  },
+  {
+    "id_entregador": "entregador_1335",
+    "latitude": -19.933707867505102,
+    "longitude": -43.92341351069163,
+    "distancia_geografica_m": 1750.0784475436274,
+    "distancia_viaria_m": 2130.3,
+    "tempo_exibido": "3 min 19 s"
+  },
+  {
+    "id_entregador": "entregador_1182",
+    "latitude": -19.9444071,
+    "longitude": -43.9096867,
+    "distancia_geografica_m": 1266.2302390637503,
+    "distancia_viaria_m": 2130.6,
+    "tempo_exibido": "3 min 39 s"
+  },
+  {
+    "id_entregador": "entregador_1512",
+    "latitude": -19.9444071,
+    "longitude": -43.9096867,
+    "distancia_geografica_m": 1266.2302390637503,
+    "distancia_viaria_m": 2130.6,
+    "tempo_exibido": "3 min 39 s"
+  },
+  {
+    "id_entregador": "entregador_1246",
+    "latitude": -19.93564338958934,
+    "longitude": -43.92792268422399,
+    "distancia_geografica_m": 1691.0221038704992,
+    "distancia_viaria_m": 2138.7,
+    "tempo_exibido": "2 min 12 s"
+  },
+  {
+    "id_entregador": "entregador_4101",
+    "latitude": -19.947388904803706,
+    "longitude": -43.9345060857773,
+    "distancia_geografica_m": 1461.7256416734967,
+    "distancia_viaria_m": 2142.6,
+    "tempo_exibido": "3 min 21 s"
+  },
+  {
+    "id_entregador": "entregador_600",
+    "latitude": -19.936825105406918,
+    "longitude": -43.93306069871048,
+    "distancia_geografica_m": 1893.0433536733526,
+    "distancia_viaria_m": 2166.9,
+    "tempo_exibido": "2 min 42 s"
+  },
+  {
+    "id_entregador": "entregador_3135",
+    "latitude": -19.944542736697684,
+    "longitude": -43.93128582083877,
+    "distancia_geografica_m": 1227.01688589235,
+    "distancia_viaria_m": 2175.4,
+    "tempo_exibido": "3 min 35 s"
+  },
+  {
+    "id_entregador": "entregador_1627",
+    "latitude": -19.944423,
+    "longitude": -43.9094699,
+    "distancia_geografica_m": 1286.0558153963304,
+    "distancia_viaria_m": 2179.2,
+    "tempo_exibido": "3 min 44 s"
+  },
+  {
+    "id_entregador": "entregador_2540",
+    "latitude": -19.935089052150854,
+    "longitude": -43.9267458380666,
+    "distancia_geografica_m": 1696.4628449922345,
+    "distancia_viaria_m": 2179.9,
+    "tempo_exibido": "2 min 20 s"
+  },
+  {
+    "id_entregador": "entregador_3433",
+    "latitude": -19.933890869274393,
+    "longitude": -43.927495825237806,
+    "distancia_geografica_m": 1849.510693921461,
+    "distancia_viaria_m": 2180.0,
+    "tempo_exibido": "2 min 23 s"
+  },
+  {
+    "id_entregador": "entregador_3721",
+    "latitude": -19.943994607974286,
+    "longitude": -43.90878413699946,
+    "distancia_geografica_m": 1371.1198723357707,
+    "distancia_viaria_m": 2185.4,
+    "tempo_exibido": "3 min 45 s"
+  },
+  {
+    "id_entregador": "entregador_1769",
+    "latitude": -19.93904302638876,
+    "longitude": -43.931934384252195,
+    "distancia_geografica_m": 1634.8002540702066,
+    "distancia_viaria_m": 2191.8,
+    "tempo_exibido": "2 min 45 s"
+  },
+  {
+    "id_entregador": "entregador_580",
+    "latitude": -19.949863699999998,
+    "longitude": -43.9130104,
+    "distancia_geografica_m": 802.591675507218,
+    "distancia_viaria_m": 2193.4,
+    "tempo_exibido": "3 min 53 s"
+  },
+  {
+    "id_entregador": "entregador_1568",
+    "latitude": -19.949863699999998,
+    "longitude": -43.9130104,
+    "distancia_geografica_m": 802.591675507218,
+    "distancia_viaria_m": 2193.4,
+    "tempo_exibido": "3 min 53 s"
+  },
+  {
+    "id_entregador": "entregador_3726",
+    "latitude": -19.942874524529497,
+    "longitude": -43.93196726936476,
+    "distancia_geografica_m": 1377.2258980917957,
+    "distancia_viaria_m": 2196.5,
+    "tempo_exibido": "3 min 38 s"
+  },
+  {
+    "id_entregador": "entregador_772",
+    "latitude": -19.941598899999992,
+    "longitude": -43.9108314,
+    "distancia_geografica_m": 1332.5901518457301,
+    "distancia_viaria_m": 2206.1,
+    "tempo_exibido": "3 min 39 s"
+  },
+  {
+    "id_entregador": "entregador_1831",
+    "latitude": -19.93462425068301,
+    "longitude": -43.930446471469544,
+    "distancia_geografica_m": 1919.6409874148228,
+    "distancia_viaria_m": 2228.0,
+    "tempo_exibido": "2 min 20 s"
+  },
+  {
+    "id_entregador": "entregador_3581",
+    "latitude": -19.94302220958154,
+    "longitude": -43.93377849104713,
+    "distancia_geografica_m": 1535.3056809532716,
+    "distancia_viaria_m": 2238.8,
+    "tempo_exibido": "3 min 27 s"
+  },
+  {
+    "id_entregador": "entregador_878",
+    "latitude": -19.943749610421907,
+    "longitude": -43.908338075293806,
+    "distancia_geografica_m": 1424.9099951466865,
+    "distancia_viaria_m": 2239.4,
+    "tempo_exibido": "3 min 51 s"
+  },
+  {
+    "id_entregador": "entregador_576",
+    "latitude": -19.933320559124816,
+    "longitude": -43.92859291945553,
+    "distancia_geografica_m": 1954.0000674760038,
+    "distancia_viaria_m": 2240.1,
+    "tempo_exibido": "2 min 20 s"
+  },
+  {
+    "id_entregador": "entregador_773",
+    "latitude": -19.93546652988985,
+    "longitude": -43.93073879341236,
+    "distancia_geografica_m": 1858.2180785232517,
+    "distancia_viaria_m": 2259.0,
+    "tempo_exibido": "2 min 47 s"
+  },
+  {
+    "id_entregador": "entregador_947",
+    "latitude": -19.933191528710974,
+    "longitude": -43.92086352790831,
+    "distancia_geografica_m": 1783.7835712269887,
+    "distancia_viaria_m": 2261.0,
+    "tempo_exibido": "3 min 36 s"
+  },
+  {
+    "id_entregador": "entregador_2643",
+    "latitude": -19.94357230314537,
+    "longitude": -43.93369910044905,
+    "distancia_geografica_m": 1501.243723941823,
+    "distancia_viaria_m": 2318.9,
+    "tempo_exibido": "3 min 33 s"
+  },
+  {
+    "id_entregador": "entregador_2884",
+    "latitude": -19.938413306716786,
+    "longitude": -43.93278242673404,
+    "distancia_geografica_m": 1747.2665760265916,
+    "distancia_viaria_m": 2338.4,
+    "tempo_exibido": "3 min 01 s"
+  },
+  {
+    "id_entregador": "entregador_2262",
+    "latitude": -19.947960184506453,
+    "longitude": -43.936968371270254,
+    "distancia_geografica_m": 1710.5047828952743,
+    "distancia_viaria_m": 2378.5,
+    "tempo_exibido": "3 min 41 s"
+  },
+  {
+    "id_entregador": "entregador_4212",
+    "latitude": -19.937846268717767,
+    "longitude": -43.93266381838561,
+    "distancia_geografica_m": 1782.5153563542783,
+    "distancia_viaria_m": 2402.7,
+    "tempo_exibido": "3 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_1747",
+    "latitude": -19.943032900000006,
+    "longitude": -43.90700850000001,
+    "distancia_geografica_m": 1584.6712576870639,
+    "distancia_viaria_m": 2406.4,
+    "tempo_exibido": "4 min 09 s"
+  },
+  {
+    "id_entregador": "entregador_2859",
+    "latitude": -19.931772800000005,
+    "longitude": -43.9235316,
+    "distancia_geografica_m": 1964.4855712830897,
+    "distancia_viaria_m": 2417.2,
+    "tempo_exibido": "3 min 49 s"
+  },
+  {
+    "id_entregador": "entregador_1200",
+    "latitude": -19.938651552678976,
+    "longitude": -43.93430695995163,
+    "distancia_geografica_m": 1849.0931013672046,
+    "distancia_viaria_m": 2427.9,
+    "tempo_exibido": "3 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_4932",
+    "latitude": -19.950990552527614,
+    "longitude": -43.936306506222564,
+    "distancia_geografica_m": 1647.094201448937,
+    "distancia_viaria_m": 2436.0,
+    "tempo_exibido": "4 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_1359",
+    "latitude": -19.945208004383275,
+    "longitude": -43.93470340128162,
+    "distancia_geografica_m": 1534.607465829613,
+    "distancia_viaria_m": 2439.4,
+    "tempo_exibido": "3 min 38 s"
+  },
+  {
+    "id_entregador": "entregador_1602",
+    "latitude": -19.9430633,
+    "longitude": -43.9066903,
+    "distancia_geografica_m": 1613.2437488805704,
+    "distancia_viaria_m": 2439.9,
+    "tempo_exibido": "4 min 13 s"
+  },
+  {
+    "id_entregador": "entregador_1058",
+    "latitude": -19.93452601696455,
+    "longitude": -43.929189831124155,
+    "distancia_geografica_m": 1862.560484704834,
+    "distancia_viaria_m": 2443.4,
+    "tempo_exibido": "2 min 58 s"
+  },
+  {
+    "id_entregador": "entregador_722",
+    "latitude": -19.931999748979635,
+    "longitude": -43.91859529358382,
+    "distancia_geografica_m": 1928.2873722820575,
+    "distancia_viaria_m": 2444.8,
+    "tempo_exibido": "4 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_2034",
+    "latitude": -19.950051213033564,
+    "longitude": -43.93606374534127,
+    "distancia_geografica_m": 1612.6534894989557,
+    "distancia_viaria_m": 2451.3,
+    "tempo_exibido": "4 min 09 s"
+  },
+  {
+    "id_entregador": "entregador_2494",
+    "latitude": -19.941036341956845,
+    "longitude": -43.9363073526064,
+    "distancia_geografica_m": 1872.355656790123,
+    "distancia_viaria_m": 2461.6,
+    "tempo_exibido": "2 min 34 s"
+  },
+  {
+    "id_entregador": "entregador_3223",
+    "latitude": -19.938644441993645,
+    "longitude": -43.93350810092668,
+    "distancia_geografica_m": 1785.9862669382765,
+    "distancia_viaria_m": 2487.9,
+    "tempo_exibido": "3 min 15 s"
+  },
+  {
+    "id_entregador": "entregador_3021",
+    "latitude": -19.94034699026696,
+    "longitude": -43.93722580803531,
+    "distancia_geografica_m": 1993.6337739798262,
+    "distancia_viaria_m": 2490.3,
+    "tempo_exibido": "2 min 31 s"
+  },
+  {
+    "id_entregador": "entregador_3692",
+    "latitude": -19.9427531,
+    "longitude": -43.9059402,
+    "distancia_geografica_m": 1698.8762524385345,
+    "distancia_viaria_m": 2527.1,
+    "tempo_exibido": "4 min 22 s"
+  },
+  {
+    "id_entregador": "entregador_4787",
+    "latitude": -19.9427531,
+    "longitude": -43.9059402,
+    "distancia_geografica_m": 1698.8762524385345,
+    "distancia_viaria_m": 2527.1,
+    "tempo_exibido": "4 min 22 s"
+  },
+  {
+    "id_entregador": "entregador_5000",
+    "latitude": -19.9427531,
+    "longitude": -43.9059402,
+    "distancia_geografica_m": 1698.8762524385345,
+    "distancia_viaria_m": 2527.1,
+    "tempo_exibido": "4 min 22 s"
+  },
+  {
+    "id_entregador": "entregador_4015",
+    "latitude": -19.93745909999999,
+    "longitude": -43.9105118,
+    "distancia_geografica_m": 1684.9107698043383,
+    "distancia_viaria_m": 2537.1,
+    "tempo_exibido": "4 min 14 s"
+  },
+  {
+    "id_entregador": "entregador_4380",
+    "latitude": -19.942572989590456,
+    "longitude": -43.905717758161096,
+    "distancia_geografica_m": 1728.4465161513742,
+    "distancia_viaria_m": 2557.7,
+    "tempo_exibido": "4 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_608",
+    "latitude": -19.941971755486946,
+    "longitude": -43.93655498121464,
+    "distancia_geografica_m": 1847.2336675029148,
+    "distancia_viaria_m": 2568.7,
+    "tempo_exibido": "2 min 46 s"
+  },
+  {
+    "id_entregador": "entregador_3173",
+    "latitude": -19.943993608475363,
+    "longitude": -43.93436346368431,
+    "distancia_geografica_m": 1546.3082751773823,
+    "distancia_viaria_m": 2579.1,
+    "tempo_exibido": "3 min 46 s"
+  },
+  {
+    "id_entregador": "entregador_2697",
+    "latitude": -19.942158298534004,
+    "longitude": -43.93660215820937,
+    "distancia_geografica_m": 1842.719958176271,
+    "distancia_viaria_m": 2590.1,
+    "tempo_exibido": "2 min 48 s"
+  },
+  {
+    "id_entregador": "entregador_1662",
+    "latitude": -19.941990829466153,
+    "longitude": -43.936000236839206,
+    "distancia_geografica_m": 1794.3060493823687,
+    "distancia_viaria_m": 2594.8,
+    "tempo_exibido": "2 min 48 s"
+  },
+  {
+    "id_entregador": "entregador_2489",
+    "latitude": -19.945493836123983,
+    "longitude": -43.93752096414955,
+    "distancia_geografica_m": 1810.7802560855287,
+    "distancia_viaria_m": 2597.4,
+    "tempo_exibido": "4 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_2240",
+    "latitude": -19.94927109929357,
+    "longitude": -43.93800275036796,
+    "distancia_geografica_m": 1812.7600952062533,
+    "distancia_viaria_m": 2608.4,
+    "tempo_exibido": "4 min 07 s"
+  },
+  {
+    "id_entregador": "entregador_3964",
+    "latitude": -19.94113710791077,
+    "longitude": -43.93696774302811,
+    "distancia_geografica_m": 1927.6886088967015,
+    "distancia_viaria_m": 2635.0,
+    "tempo_exibido": "2 min 52 s"
+  },
+  {
+    "id_entregador": "entregador_418",
+    "latitude": -19.9413349532041,
+    "longitude": -43.937556796396855,
+    "distancia_geografica_m": 1972.4500919643997,
+    "distancia_viaria_m": 2651.2,
+    "tempo_exibido": "2 min 53 s"
+  },
+  {
+    "id_entregador": "entregador_1650",
+    "latitude": -19.93766353521272,
+    "longitude": -43.90820373001552,
+    "distancia_geografica_m": 1830.2816958261737,
+    "distancia_viaria_m": 2653.5,
+    "tempo_exibido": "4 min 20 s"
+  },
+  {
+    "id_entregador": "entregador_1927",
+    "latitude": -19.932275800000003,
+    "longitude": -43.9148132,
+    "distancia_geografica_m": 1982.0443923411515,
+    "distancia_viaria_m": 2668.4,
+    "tempo_exibido": "4 min 33 s"
+  },
+  {
+    "id_entregador": "entregador_4422",
+    "latitude": -19.93771721834791,
+    "longitude": -43.90746826864159,
+    "distancia_geografica_m": 1881.6740266779764,
+    "distancia_viaria_m": 2672.4,
+    "tempo_exibido": "4 min 21 s"
+  },
+  {
+    "id_entregador": "entregador_3438",
+    "latitude": -19.93933685459617,
+    "longitude": -43.93612194276421,
+    "distancia_geografica_m": 1955.2186040358222,
+    "distancia_viaria_m": 2687.1,
+    "tempo_exibido": "2 min 53 s"
+  },
+  {
+    "id_entregador": "entregador_306",
+    "latitude": -19.94159727459368,
+    "longitude": -43.935129118492206,
+    "distancia_geografica_m": 1734.4203147243702,
+    "distancia_viaria_m": 2711.5,
+    "tempo_exibido": "3 min 01 s"
+  },
+  {
+    "id_entregador": "entregador_1286",
+    "latitude": -19.933357402281842,
+    "longitude": -43.914652955088535,
+    "distancia_geografica_m": 1873.5489798744486,
+    "distancia_viaria_m": 2758.6,
+    "tempo_exibido": "4 min 43 s"
+  },
+  {
+    "id_entregador": "entregador_3234",
+    "latitude": -19.94273101564239,
+    "longitude": -43.93740220895959,
+    "distancia_geografica_m": 1893.4558877815286,
+    "distancia_viaria_m": 2759.3,
+    "tempo_exibido": "3 min 07 s"
+  },
+  {
+    "id_entregador": "entregador_1529",
+    "latitude": -19.944103323012058,
+    "longitude": -43.93696757860966,
+    "distancia_geografica_m": 1797.4617701696661,
+    "distancia_viaria_m": 2763.6,
+    "tempo_exibido": "4 min 26 s"
+  },
+  {
+    "id_entregador": "entregador_2736",
+    "latitude": -19.936474681786336,
+    "longitude": -43.93374349465768,
+    "distancia_geografica_m": 1970.4751438797387,
+    "distancia_viaria_m": 2792.6,
+    "tempo_exibido": "3 min 19 s"
+  },
+  {
+    "id_entregador": "entregador_1078",
+    "latitude": -19.943769556327737,
+    "longitude": -43.93530227243078,
+    "distancia_geografica_m": 1646.6525273628765,
+    "distancia_viaria_m": 2813.9,
+    "tempo_exibido": "3 min 09 s"
+  },
+  {
+    "id_entregador": "entregador_66",
+    "latitude": -19.94170309462082,
+    "longitude": -43.93374047377312,
+    "distancia_geografica_m": 1603.2420733274025,
+    "distancia_viaria_m": 2842.0,
+    "tempo_exibido": "4 min 02 s"
+  },
+  {
+    "id_entregador": "entregador_3314",
+    "latitude": -19.943173673325838,
+    "longitude": -43.93831447948638,
+    "distancia_geografica_m": 1964.5005304954404,
+    "distancia_viaria_m": 2845.3,
+    "tempo_exibido": "3 min 07 s"
+  },
+  {
+    "id_entregador": "entregador_2998",
+    "latitude": -19.94321033104853,
+    "longitude": -43.938324205095185,
+    "distancia_geografica_m": 1964.0618485866762,
+    "distancia_viaria_m": 2849.5,
+    "tempo_exibido": "3 min 07 s"
+  },
+  {
+    "id_entregador": "entregador_3046",
+    "latitude": -19.945880371306544,
+    "longitude": -43.93906556696754,
+    "distancia_geografica_m": 1959.6360068361084,
+    "distancia_viaria_m": 2917.8,
+    "tempo_exibido": "4 min 43 s"
+  },
+  {
+    "id_entregador": "entregador_768",
+    "latitude": -19.940860248181806,
+    "longitude": -43.933519329629775,
+    "distancia_geografica_m": 1635.0627880043164,
+    "distancia_viaria_m": 2938.3,
+    "tempo_exibido": "4 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_2870",
+    "latitude": -19.94003325765144,
+    "longitude": -43.93370790767092,
+    "distancia_geografica_m": 1704.8423063463226,
+    "distancia_viaria_m": 3053.4,
+    "tempo_exibido": "4 min 15 s"
+  },
+  {
+    "id_entregador": "entregador_244",
+    "latitude": -19.94396382408446,
+    "longitude": -43.93883556119829,
+    "distancia_geografica_m": 1988.1067404874689,
+    "distancia_viaria_m": 3125.6,
+    "tempo_exibido": "5 min 06 s"
+  },
+  {
+    "id_entregador": "entregador_3926",
+    "latitude": -19.933930002087177,
+    "longitude": -43.91437204730623,
+    "distancia_geografica_m": 1824.0583406117546,
+    "distancia_viaria_m": 3517.0,
+    "tempo_exibido": "6 min 08 s"
+  },
+  {
+    "id_entregador": "entregador_1283",
+    "latitude": -19.935017779223358,
+    "longitude": -43.9094831939096,
+    "distancia_geografica_m": 1965.4627923066232,
+    "distancia_viaria_m": 3844.2,
+    "tempo_exibido": "6 min 28 s"
+  },
+  {
+    "id_entregador": "entregador_3690",
+    "latitude": -19.935242060518913,
+    "longitude": -43.9113362728254,
+    "distancia_geografica_m": 1835.6946443314066,
+    "distancia_viaria_m": 3951.5,
+    "tempo_exibido": "6 min 56 s"
+  },
+  {
+    "id_entregador": "entregador_2685",
+    "latitude": -19.936710735242716,
+    "longitude": -43.913379914601684,
+    "distancia_geografica_m": 1586.6977953999328,
+    "distancia_viaria_m": null,
+    "tempo_exibido": "Sem rota"
+  },
+  {
+    "id_entregador": "entregador_4745",
+    "latitude": -19.94317793766025,
+    "longitude": -43.90934425302325,
+    "distancia_geografica_m": 1360.9128844877669,
+    "distancia_viaria_m": null,
+    "tempo_exibido": "Sem rota"
+  }
+]

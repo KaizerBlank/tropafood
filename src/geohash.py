@@ -114,7 +114,9 @@ def vizinhos_adjacentes(geohash):
         nova_lat = lat_centro + var_lat
         nova_long = long_centro + var_long
             
-        vizinho_hash = encode_geohash(nova_lat, nova_long)
+        vizinho_hash = encode_geohash(
+            nova_lat, nova_long
+            )[:len(geohash)]
         vizinhos.append(vizinho_hash)
         
     return vizinhos
