@@ -48,44 +48,35 @@ def encode_geohash(lat, long):
     return geohash
 
 def decode_geohash(geohash):
-    #Vamos reconstruir a string binária e então descobrir a coordenada
     bits_Z = []
     for char in geohash:
         index = base32.find(char)
         temp_bin = bin(index)[2:].zfill(5)
         bits_Z.extend(temp_bin)
 
-    numero_intercalacoes = int(len(bits_Z) / 2)
-    
-    #Esses são os limites iniciais para latitude e longitude que usamos no encoding
     lat_lower, lat_upper = -90.0, 90.0
     long_lower, long_upper = -180.0, 180.0
-    
-    # Agora fazemos literalmente uma engenharia reversa para encontrar qual a coordenada (longitude e latitude) a partir do valor dos bits
-    for i in range(numero_intercalacoes):
-        long_bit = bits_Z[i * 2]
-        lat_bit = bits_Z[i * 2 + 1]
-        
-        long_mid = (long_upper + long_lower) / 2
-        if long_bit == '1':
-            long_lower = long_mid
-        else:
-            long_upper = long_mid
-            
-        lat_mid = (lat_upper + lat_lower) / 2
-        if lat_bit == '1':
-            lat_lower = lat_mid
-        else:
-            lat_upper = lat_mid
 
-    #Aqui nós calculamos o centro geográfico da malha em que estávamos
+    for i, bit in enumerate(bits_Z):
+        if i % 2 == 0:  # Longitude
+            long_mid = (long_upper + long_lower) / 2
+            if bit == "1":
+                long_lower = long_mid
+            else:
+                long_upper = long_mid
+        else:  # Latitude
+            lat_mid = (lat_upper + lat_lower) / 2
+            if bit == "1":
+                lat_lower = lat_mid
+            else:
+                lat_upper = lat_mid
+
     lat_centro = (lat_upper + lat_lower) / 2
     long_centro = (long_upper + long_lower) / 2
-    
-    # O erro é a distância do centro até as bordas da malha
+
     lat_erro = lat_upper - lat_centro
     long_erro = long_upper - long_centro
-    
+
     return lat_centro, long_centro, lat_erro, long_erro
 
 #Essa função vai cobrir o caso depontos  vizinhos muito próximos um dos outros, temos que lembrar de dar o append do geohash e calcular no total, 9 buscas na árvore. 
