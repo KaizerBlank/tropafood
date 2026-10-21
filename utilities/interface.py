@@ -43,7 +43,6 @@ def plota_mapa_interface(
     ):
         restaurante = df_bares.iloc[int(indice_restaurante_selecionado)]
 
-    # 1. Entregadores (com cor dinâmica)
     if not df_entregadores.empty:
         if restaurante is not None:
             no_raio = filtrar_entregadores_por_raio(
@@ -55,13 +54,22 @@ def plota_mapa_interface(
         else:
             cores = "red"
 
+        texto_tooltip = (
+            "ID: "
+            + df_entregadores["id_entregador"].astype(str)
+            + "<br>Lat: "
+            + df_entregadores["latitude_rua_graus"].round(5).astype(str)
+            + "<br>Lon: "
+            + df_entregadores["longitude_rua_graus"].round(5).astype(str)
+        )
+
         fig.add_trace(
             go.Scattermap(
                 lat=df_entregadores["latitude_rua_graus"],
                 lon=df_entregadores["longitude_rua_graus"],
                 mode="markers",
                 marker=dict(size=6, color=cores, opacity=0.7),
-                text=df_entregadores["id_entregador"],
+                text=texto_tooltip,
                 hoverinfo="text",
                 name="Entregadores",
             )
@@ -72,13 +80,21 @@ def plota_mapa_interface(
         if restaurante is not None:
             outros = df_bares.drop(index=int(indice_restaurante_selecionado))
 
+        texto_outros = (
+            outros.get("NOME", "Restaurante").astype(str)
+            + "<br>Lat: "
+            + outros["LATITUDE"].round(5).astype(str)
+            + "<br>Lon: "
+            + outros["LONGITUDE"].round(5).astype(str)
+        )
+
         fig.add_trace(
             go.Scattermap(
                 lat=outros["LATITUDE"],
                 lon=outros["LONGITUDE"],
                 mode="markers",
                 marker=dict(size=7, color="blue"),
-                text=outros.get("NOME", "Restaurante"),
+                text=texto_outros,  # <--- passa a variável aqui
                 hoverinfo="text",
                 name="Restaurantes",
             )
