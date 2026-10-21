@@ -234,25 +234,29 @@ influenciam os tempos medidos.
 
 ## 5. Interface do mapa
 
-O mapa da aplicação é construído com Dash Leaflet e usa o OpenStreetMap como camada de fundo. Os entregadores são representados por marcadores circulares posicionados nas coordenadas corrigidas para as ruas; ao passar o cursor sobre um marcador, é exibido o ID do entregador.
+O mapa foi feito com Plotly integrado ao Dash, usando o OpenStreetMap como fundo. Os entregadores aparecem como pontos nas coordenadas corrigidas para as ruas, mostrando o ID, longitude e latitude ao passar o mouse. 
 
-É possível buscar um restaurante pelo nome e definir um raio de busca em metros. O valor deve ser maior que zero; caso contrário, a interface informa que o raio é inválido. Ao selecionar um restaurante, o mapa o destaca com um marcador e centraliza a visualização nele. Os entregadores dentro do raio ficam verdes, enquanto os que estão fora permanecem vermelhos. O resumo informa quantos entregadores estão dentro do raio em relação ao total exibido. A opção **Exibir raio de busca** desenha a área circular configurada no mapa.
+É possível para buscar restaurantes pelo nome e definir um raio de busca: ao escolher um bar, o mapa centraliza nele, marcando em verde os entregadores que estão dentro do raio e em vermelho os que ficaram fora. 
+
+A interface também permite visualizar a área circular do raio e os outros restaurantes cadastrados.
+
+![alt text](assets/images/filtrados.png)
 
 A opção **Exibir todos os restaurantes** adiciona ao mapa os demais restaurantes. Sem um restaurante selecionado, os entregadores aparecem em vermelho. Na abertura da aplicação, os entregadores ainda não são exibidos; eles aparecem após a geração de uma frota.
 
+**Apenas Entregadores**
+![alt text](assets/images/entregadores.png)
+
+**Apenas Restaurantes**
+![alt text](assets/images/restaurantes.png)
+
 ## 6. Aplicação web
 
-O arquivo `app.py` monta a aplicação Dash. Na abertura, carrega os bares e apresenta o mapa inicial, a princípio sem os entregadores. A página possui um campo para inserir a quantidade de entregadores a serem gerados, um botão para a geração e uma opção para salvar os resultados em CSV.
+A aplicação roda em Dash através do `app.py`. Nela, o usuário informa a quantidade desejada de entregadores e clica para gerar a frota, que é corrigida para a malha viária e exibida no mapa. 
 
-Ao clicar no botão, o callback valida a quantidade de entregadores, onde é necessário que o valor inserido seja inteiro maior que zero, gera uma nova frota, carrega a malha, corrige as posições para as ruas e atualiza o mapa. A frota de entregadores que foi gerada a esse ponto substitui a que estava sendo exibida anteriormente.
+Há uma opção de salvar a geração em CSV (posições originais e corrigidas), salvando os arquivos com data e hora para não sobrescrever dados antigos. 
 
-A página também possui um checkbox **Salvar CSVs desta geração**, quando este esta marcado, o app grava dois arquivos: um com as posições matemáticas e outro com as posições corrigidas. Os nomes recebem um identificador de data e hora e um código aleatorio, a fim de evitar a sobrescrição dos arquivos gerados anteriormente.
-
-Além disso, também conta com um campo para selecionar algum bar em específico e traçar a busca por entregadores em um determinado raio de distância, que também pode ser configurado.
-
-Os registros da geração são mantidos em um `dcc.Store` em memória no navegador. Isso permite trocar o restaurante e comparar os percursos dos mesmos entregadores, sem gerar novas posições. Uma nova geração substitui os registros anteriores, e recarregar a página limpa esse armazenamento.
-
-Os callbacks separam a geração, a atualização do mapa e a consulta das rotas. Essa organização evita que uma mudança de restaurante execute novamente a geração dos entregadores.
+Ao escolher um restaurante, a aplicação lista em uma tabela os entregadores dentro do raio, mostrando a distância em metros e o tempo estimado de rota.
 
 A função `montar_tabela_rotas()`, em `utilities/interface.py`, mantém a ordenação fornecida pela Frota. A distância é apresentada em metros, e o tempo é convertido de segundos para minutos somente na exibição. Resultados sem caminho aparecem como **Sem rota**, diferenciando essa situação de um percurso com distância zero.
 

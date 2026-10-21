@@ -95,7 +95,7 @@ app.layout = html.Main([
                         type="number",
                         min=1,
                         step=1,
-                        value=100,
+                        value=5000,
                         className="campo-numero",
                     ),
                     dcc.Checklist(
